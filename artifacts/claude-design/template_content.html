@@ -217,14 +217,18 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
     <div style="background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden;">
     <div style="padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
       <div style="display:flex; align-items:center; gap:14px; min-width:0;">
-        <div style="width:42px; height:42px; flex:none; border-radius:var(--radius-md); background:var(--ai-accent-gradient); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-xs-ai);">
+        <button onclick="{{ goHome }}" title="Home" style="width:42px; height:42px; flex:none; border:0; padding:0; border-radius:var(--radius-md); background:var(--ai-accent-gradient); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-xs-ai); cursor:pointer;">
           <svg viewBox="0 0 32 32" fill="#fff" style="width:24px;height:24px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.75-0.216 1.327-0.788 1.566-1.497 0.078-0.232 0.12-0.479 0.12-0.733 0-1.011-0.665-1.909-1.614-2.213l-3.443-0.996zM29 6.246c1.529 0.507 1.944 0.923 2.45 2.455 0.225 0.665 1.135 0.665 1.36 0-0-0.001 0.415-1.417 1.944-1.923"></path><path d="M21.064 7.275c2.293 0.76 2.916 1.385 3.675 3.683 0.337 0.997 1.703 0.997 2.040 0 0.759-2.298 1.382-2.923 3.675-3.683 0.995-0.338 0.995-1.707 0-2.044-2.293-0.76-2.917-1.385-3.675-3.683-0.337-0.997-1.703-0.997-2.040 0-0.759 2.298-1.382 2.923-3.675 3.683-0.489 0.169-0.742 0.591-0.742 1.031s0.253 0.862 0.742 1.014z"></path></svg>
-        </div>
+        </button>
         <div style="min-width:0;">
           <div style="display:flex; align-items:center; gap:10px;">
             <h1 style="font-size:18px; line-height:24px; font-weight:700; letter-spacing:-0.2px; color:var(--neutral-b1); margin:0;">QA Buddy</h1>
             <span style="font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--ai-accent-0); background:var(--ai-t10); border:1px solid var(--ai-t20); padding:2px 8px; border-radius:var(--radius-full);">AI</span>
           </div>
+          <button onclick="{{ openModal }}" title="Service access" style="display:inline-flex; align-items:center; gap:6px; background:transparent; border:0; padding:0; margin-top:3px; cursor:pointer;">
+            <span style="width:7px; height:7px; border-radius:50%; background:{{ svcSummaryDot }}; flex:none;"></span>
+            <span style="font-size:12px; font-weight:600; color:{{ svcSummaryColor }};">{{ svcSummaryText }}</span>
+          </button>
         </div>
       </div>
       <div style="position:relative; display:flex; align-items:center; gap:10px;">
@@ -931,6 +935,7 @@ class Component extends DCLogic {
       { mark:'C', name:'Confluence', detail:(s.checks.confluence.account ? s.checks.confluence.account + ' \u00B7 ' : '') + 'Requirement pages and specs', ok:confMeta === pillOk, ...confMeta, rowStyle:svcRow },
       { mark:'T', name:'TestIT', detail:'Push generated test cases to test runs', ok:titMeta === pillOk, ...titMeta, rowStyle:svcRow },
     ];
+    const svcOkCount = services.filter(v => v.ok).length;
     const jiraLabel = cfg && cfg.jira.configured ? 'Jira (' + jiraAccount + ')' : 'Jira';
     const serverNote = s.serverCfgFailed
       ? 'Can\u2019t reach the app server to read settings. Refresh to try again. Confluence and TestIT values are saved only in this browser and are never written to project files or run artifacts.'
@@ -1057,6 +1062,12 @@ class Component extends DCLogic {
       syncStatusLabel: s.syncing ? 'Syncing…' : (s.lastSyncedAt ? 'Last synced' : 'Sync'),
       syncTimeLabel: this.relTime(s.lastSyncedAt),
       showConnDot: services.some(v => !v.ok),
+      goHome: () => this.setState({ tab:'generate', step:1, modalOpen:false }),
+      svcSummaryText: svcOkCount === services.length ? 'Service access · All connected'
+        : svcOkCount > 0 ? 'Service access · Partially connected'
+        : 'Service access · Not connected',
+      svcSummaryDot: svcOkCount === services.length ? 'var(--success)' : svcOkCount > 0 ? 'var(--warning)' : 'var(--neutral-b4)',
+      svcSummaryColor: svcOkCount === services.length ? 'var(--success-f)' : svcOkCount > 0 ? 'var(--warning-f)' : 'var(--neutral-b2)',
       syncIconColor: s.syncing ? 'var(--primary-f)' : 'var(--neutral-b2)',
       step: s.step, isStep1:s.step===1, isStep2:s.step===2, isStep3:s.step===3, isStep4:s.step===4,
       steps,
