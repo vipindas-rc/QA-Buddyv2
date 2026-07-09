@@ -620,10 +620,10 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
       <div style="position:relative; width:100%; max-width:640px; background:#fff; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); padding:28px;">
         <button onclick="{{ closeModal }}" title="Close" style="position:absolute; top:20px; right:20px; width:34px; height:34px; border:0; background:transparent; border-radius:50%; cursor:pointer; color:var(--neutral-b2); display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;"><path d="M26.16 27.84l-10.16-10.141-10.16 10.141-1.68-1.68 10.141-10.16-10.141-10.16 1.68-1.68 10.16 10.141 10.16-10.141 1.68 1.68-10.141 10.16 10.141 10.16z"></path></svg></button>
         <h2 style="font-size:22px; font-weight:700; color:var(--neutral-b1); margin:0; letter-spacing:-0.2px;">Service access</h2>
-        <p style="font-size:14px; line-height:20px; color:var(--neutral-b2); margin:8px 0 0; max-width:520px;">Saved only in this browser for TestIT and Confluence requests. Jira and OpenAI credentials are read from the server .env.</p>
+        <p style="font-size:14px; line-height:20px; color:var(--neutral-b2); margin:8px 0 0; max-width:520px;">Jira is read from the server .env. Confluence and TestIT credentials are saved only in this browser.</p>
 
-        <div style="display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 24px;">
-          <sc-for list="{{ services }}" as="svc" hint-placeholder-count="3">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 18px;">
+          <sc-for list="{{ services }}" as="svc" hint-placeholder-count="4">
             <span style="{{ svc.rowStyle }}"><span style="width:8px; height:8px; border-radius:50%; background:{{ svc.dot }}; flex:none;"></span>{{ svc.name }} · {{ svc.status }}</span>
           </sc-for>
         </div>
@@ -638,19 +638,24 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
             <input type="password" value="{{ cToken }}" onchange="{{ onCToken }}" placeholder="Confluence API token" class="tcg-field" style="width:100%; box-sizing:border-box; height:44px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
           </div>
         </div>
+        <span style="{{ confResultStyle }}">{{ confResultText }}</span>
         <div style="margin-top:18px;">
           <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.2px; color:var(--neutral-b2); margin-bottom:8px;">TestIT token <span style="color:var(--danger-f);">*</span></label>
           <input type="password" value="{{ tToken }}" onchange="{{ onTToken }}" placeholder="TestIT authorization token" class="tcg-field" style="width:100%; box-sizing:border-box; height:44px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
         </div>
+        <span style="{{ titResultStyle }}">{{ titResultText }}</span>
 
-        <div style="margin-top:20px; padding:14px 16px; background:var(--neutral-b5); border-radius:var(--radius-sm); font-size:13px; line-height:19px; color:var(--neutral-b2);">Jira credentials and the OpenAI API key are loaded from .env on the server. Browser-saved values are never written to project files or run artifacts.</div>
+        <div style="margin-top:20px; padding:14px 16px; background:var(--neutral-b5); border-radius:var(--radius-sm); font-size:13px; line-height:19px; color:var(--neutral-b2);">{{ serverNote }}</div>
 
-        <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:24px;">
-          <sc-if value="{{ credsSaved }}" hint-placeholder-val="{{ true }}">
-          <span style="margin-right:auto; display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f);"><svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>Saved in this browser</span>
-          </sc-if>
+        <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:20px;">
+          <div style="margin-right:auto; display:flex; align-items:center; gap:14px;">
+            <button onclick="{{ testAll }}" style="{{ testAllStyle }}">{{ testAllLabel }}</button>
+            <sc-if value="{{ credsSaved }}" hint-placeholder-val="{{ true }}">
+            <span style="display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f);"><svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>Saved in this browser</span>
+            </sc-if>
+          </div>
           <button onclick="{{ clearCreds }}" class="tcg-btn-ghost" style="height:44px; padding:0 20px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Clear</button>
-          <button onclick="{{ saveCreds }}" class="tcg-btn-primary" style="height:44px; padding:0 22px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-primary);">Save changes</button>
+          <button onclick="{{ saveCreds }}" class="tcg-btn-primary" style="{{ saveBtnStyle }}">Save</button>
         </div>
       </div>
     </div>
@@ -668,6 +673,8 @@ class Component extends DCLogic {
     reviewCount: 10, extractingUI: false, uiProgress: 0, uiStage: 0, uiDone: false,
     files: [], generated: false, syncing: false,
     modalOpen: false, credsSaved: false, cUser:'', cToken:'', tToken:'',
+    serverCfg: null, serverCfgFailed: false,
+    checks: { confluence: { status:'idle' }, testit: { status:'idle' } },
     resolved: {},
     lastSyncedAt: null, tick: 0
   };
@@ -683,6 +690,86 @@ class Component extends DCLogic {
   componentDidMount(){
     if (this.state.refs.trim()) this.resolveRefs(this.state.refs);
     this._clock = setInterval(() => { if (this.state.lastSyncedAt) this.setState(st => ({ tick: st.tick + 1 })); }, 30000);
+    this.hydrateCreds();
+    this.fetchServerConfig();
+  }
+
+  STORAGE_KEY = 'tcg-service-creds';
+
+  hydrateCreds(){
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw) || {};
+      const restore = (c) => (c && c.status === 'ok') ? { status:'ok', account: c.account || '' } : { status:'idle' };
+      const checks = d.checks || {};
+      this.setState({
+        cUser: d.cUser || '', cToken: d.cToken || '', tToken: d.tToken || '',
+        credsSaved: !!(d.cUser || d.cToken || d.tToken),
+        checks: { confluence: restore(checks.confluence), testit: restore(checks.testit) }
+      });
+    } catch (e) {}
+  }
+
+  fetchServerConfig(){
+    fetch('/api/services/config')
+      .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
+      .then(cfg => this.setState({ serverCfg: cfg, serverCfgFailed: false }))
+      .catch(() => this.setState({ serverCfg: null, serverCfgFailed: true }));
+  }
+
+  setCheck(svc, patch){
+    this.setState(st => ({ checks: { ...st.checks, [svc]: patch } }));
+  }
+
+  testService(svc){
+    const s = this.state;
+    if (s.checks[svc].status === 'checking') return;
+    if (svc === 'confluence' && (!s.cUser.trim() || !s.cToken.trim())) {
+      this.setCheck(svc, { status:'fail', message:'Enter your Confluence username and API token.' });
+      return;
+    }
+    if (svc === 'testit' && !s.tToken.trim()) {
+      this.setCheck(svc, { status:'fail', message:'Enter your TestIT token.' });
+      return;
+    }
+    this.setCheck(svc, { status:'checking' });
+    const body = svc === 'confluence'
+      ? { service:'confluence', username: s.cUser.trim(), token: s.cToken }
+      : { service:'testit', token: s.tToken };
+    fetch('/api/services/test', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(r => r.json())
+      .then(res => this.setCheck(svc, res.ok
+        ? { status:'ok', account: res.account || '' }
+        : { status:'fail', message: res.message || 'The check didn\u2019t finish. Try again.' }))
+      .catch(() => this.setCheck(svc, { status:'fail', message:'Can\u2019t reach the app server. Try again.' }));
+  }
+
+  setCred(key, svc){
+    return (e) => {
+      const v = e.target.value;
+      this.setState(st => ({ [key]: v, checks: { ...st.checks, [svc]: { status:'idle' } } }));
+      setTimeout(() => {
+        const st = this.state;
+        const ready = svc === 'confluence' ? (st.cUser.trim() && st.cToken.trim()) : !!st.tToken.trim();
+        if (ready) this.testService(svc);
+      }, 0);
+    };
+  }
+
+  persistCreds(){
+    const s = this.state;
+    const keep = (c) => c.status === 'ok' ? { status:'ok', account: c.account || '' } : undefined;
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+        cUser: s.cUser, cToken: s.cToken, tToken: s.tToken,
+        checks: { confluence: keep(s.checks.confluence), testit: keep(s.checks.testit) }
+      }));
+    } catch (e) {}
   }
 
   componentWillUnmount(){ if (this._clock) clearInterval(this._clock); }
@@ -824,17 +911,45 @@ class Component extends DCLogic {
 
     const badge = (color, bg) => ({ fontSize:'12px', fontWeight:600, padding:'4px 12px', borderRadius:'9999px', color, background:bg, whiteSpace:'nowrap' });
     const svcRow = { display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'13px', fontWeight:600, color:'var(--neutral-b1)', padding:'7px 13px', border:'1px solid var(--border)', borderRadius:'9999px', background:'#fff' };
-    const jiraOk = true; // read from server .env in this prototype
-    const confluenceOk = !!(s.credsSaved && s.cUser.trim() && s.cToken.trim());
-    const testitOk = !!(s.credsSaved && s.tToken.trim());
-    const svcMeta = ok => ok
-      ? { status:'Connected', badgeStyle: badge('var(--success-f)','var(--success-t10)'), dot:'var(--success)' }
-      : { status:'Not configured', badgeStyle: badge('var(--warning-f)','rgba(255,102,0,.1)'), dot:'var(--warning)' };
+    const pillOk = { status:'Connected', badgeStyle: badge('var(--success-f)','var(--success-t10)'), dot:'var(--success)' };
+    const pillOff = { status:'Not configured', badgeStyle: badge('var(--warning-f)','rgba(255,102,0,.1)'), dot:'var(--warning)' };
+    const pillFail = { status:'Not connected', badgeStyle: badge('var(--danger-f)','var(--danger-t10)'), dot:'var(--danger)' };
+    const pillChecking = { status:'Checking\u2026', badgeStyle: badge('var(--neutral-b2)','var(--neutral-b5)'), dot:'var(--neutral-b4)' };
+    const cfg = s.serverCfg;
+    const serverPill = (svc) => cfg
+      ? ((cfg[svc] || {}).configured ? pillOk : pillOff)
+      : (s.serverCfgFailed ? pillOff : pillChecking);
+    const browserPill = (chk) => chk.status === 'checking' ? pillChecking
+      : chk.status === 'ok' ? pillOk
+      : chk.status === 'fail' ? pillFail
+      : pillOff;
+    const jiraMeta = serverPill('jira');
+    const confMeta = browserPill(s.checks.confluence), titMeta = browserPill(s.checks.testit);
+    const jiraAccount = cfg && cfg.jira.account ? cfg.jira.account : '';
     const services = [
-      { mark:'J', name:'Jira Cloud', detail:'evaa.atlassian.net · reads stories, writes test cases', ok:jiraOk, ...svcMeta(jiraOk), rowStyle:svcRow },
-      { mark:'C', name:'Confluence', detail:'Requirement pages and specs', ok:confluenceOk, ...svcMeta(confluenceOk), rowStyle:svcRow },
-      { mark:'T', name:'TestIT', detail:'Push generated test cases to test runs', ok:testitOk, ...svcMeta(testitOk), rowStyle:svcRow },
+      { mark:'J', name:'Jira Cloud', detail:(jiraAccount ? jiraAccount + ' \u00B7 ' : '') + 'Reads stories, writes test cases', ok:jiraMeta === pillOk, ...jiraMeta, rowStyle:svcRow },
+      { mark:'C', name:'Confluence', detail:(s.checks.confluence.account ? s.checks.confluence.account + ' \u00B7 ' : '') + 'Requirement pages and specs', ok:confMeta === pillOk, ...confMeta, rowStyle:svcRow },
+      { mark:'T', name:'TestIT', detail:'Push generated test cases to test runs', ok:titMeta === pillOk, ...titMeta, rowStyle:svcRow },
     ];
+    const jiraLabel = cfg && cfg.jira.configured ? 'Jira (' + jiraAccount + ')' : 'Jira';
+    const serverNote = s.serverCfgFailed
+      ? 'Can\u2019t reach the app server to read settings. Refresh to try again. Confluence and TestIT values are saved only in this browser and are never written to project files or run artifacts.'
+      : jiraLabel + ' credentials stay in the server .env. Confluence and TestIT values are saved only in this browser and are never written to project files or run artifacts.';
+    const testBtn = (checking) => ({
+      height:'44px', padding:'0 20px', border:'1px solid var(--border)', borderRadius:'var(--radius-md)',
+      background:'#fff', color: checking ? 'var(--neutral-b3)' : 'var(--primary-f-high-contrast)',
+      fontSize:'14px', fontWeight:600, cursor: checking ? 'progress' : 'pointer', flex:'none'
+    });
+    const resultLine = (chk, name) => {
+      const base = { display:'block', marginTop:'8px', fontSize:'13px', fontWeight:600, lineHeight:'18px' };
+      if (chk.status === 'checking') return { style:{ ...base, color:'var(--primary-f)' }, text:'Checking connection\u2026' };
+      if (chk.status === 'ok') return { style:{ ...base, color:'var(--success-f)' }, text: chk.account ? 'Connected as ' + chk.account + '.' : 'Connected to ' + name + '.' };
+      if (chk.status === 'fail') return { style:{ ...base, color:'var(--danger-f)' }, text: chk.message || 'The check didn\u2019t finish. Try again.' };
+      return { style:{ display:'none' }, text:'' };
+    };
+    const confResult = resultLine(s.checks.confluence, 'Confluence');
+    const titResult = resultLine(s.checks.testit, 'TestIT');
+    const anyChecking = s.checks.confluence.status === 'checking' || s.checks.testit.status === 'checking';
     const parsed = this.parse(s.refs);
     const chipWrap = { display:'inline-flex', alignItems:'center', gap:'7px', fontSize:'13px', fontWeight:600, padding:'5px 12px 5px 7px', borderRadius:'9999px' };
     const tagBase = { fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'.3px', padding:'2px 6px', borderRadius:'var(--radius-xs)' };
@@ -906,15 +1021,39 @@ class Component extends DCLogic {
       showWizard: s.extracted,
       showStartHint: !s.extracted,
       modalOpen: s.modalOpen,
-      openModal: () => this.setState({ modalOpen: true }),
+      openModal: () => { this.setState({ modalOpen: true }); this.fetchServerConfig(); },
       closeModal: () => this.setState({ modalOpen: false }),
       connBorder: s.modalOpen ? 'var(--primary-f)' : 'var(--border)',
       connBg: s.modalOpen ? 'var(--primary-t10)' : '#fff',
       credsSaved: s.credsSaved,
       cUser:s.cUser, cToken:s.cToken, tToken:s.tToken,
-      onCUser:this.set('cUser'), onCToken:this.set('cToken'), onTToken:this.set('tToken'),
-      saveCreds: () => this.setState({ credsSaved: true }),
-      clearCreds: () => this.setState({ cUser:'', cToken:'', tToken:'', credsSaved:false }),
+      onCUser:this.setCred('cUser','confluence'), onCToken:this.setCred('cToken','confluence'), onTToken:this.setCred('tToken','testit'),
+      serverNote,
+      testAll: () => {
+        if (anyChecking) return;
+        const targets = [];
+        if (s.cUser.trim() || s.cToken.trim()) targets.push('confluence');
+        if (s.tToken.trim()) targets.push('testit');
+        (targets.length ? targets : ['confluence', 'testit']).forEach(svc => this.testService(svc));
+      },
+      testAllStyle: testBtn(anyChecking),
+      testAllLabel: anyChecking ? 'Checking\u2026' : 'Test connection',
+      confResultStyle: confResult.style, confResultText: confResult.text,
+      titResultStyle: titResult.style, titResultText: titResult.text,
+      saveBtnStyle: {
+        height:'44px', padding:'0 22px', border:'0', borderRadius:'var(--radius-md)',
+        background:'var(--primary-b)', color:'#fff', fontSize:'14px', fontWeight:600,
+        cursor:'pointer', boxShadow:'var(--shadow-xs-primary)'
+      },
+      saveCreds: () => {
+        this.persistCreds();
+        this.setState({ credsSaved: true, modalOpen: false });
+      },
+      clearCreds: () => {
+        try { localStorage.removeItem(this.STORAGE_KEY); } catch (e) {}
+        this.setState({ cUser:'', cToken:'', tToken:'', credsSaved:false,
+          checks: { confluence: { status:'idle' }, testit: { status:'idle' } } });
+      },
       syncStatusLabel: s.syncing ? 'Syncing…' : (s.lastSyncedAt ? 'Last synced' : 'Sync'),
       syncTimeLabel: this.relTime(s.lastSyncedAt),
       showConnDot: services.some(v => !v.ok),

@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: services
+    description: Service access configuration and connection checks
 paths:
   /healthz:
     get:
@@ -24,6 +26,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /services/config:
+    get:
+      operationId: getServicesConfig
+      tags: [services]
+      summary: Server-managed service configuration
+      description: Reports which services are configured on the server. Returns masked identifiers only, never secrets.
+      responses:
+        "200":
+          description: Configuration status per server-managed service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicesConfig"
+  /services/test:
+    post:
+      operationId: testServiceConnection
+      tags: [services]
+      summary: Test service credentials
+      description: Validates user-supplied Confluence or TestIT credentials against the service API. Tokens are never echoed back.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceTestRequest"
+      responses:
+        "200":
+          description: Result of the connection check
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceTestResult"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +67,52 @@ components:
           type: string
       required:
         - status
+    ServerServiceStatus:
+      type: object
+      properties:
+        configured:
+          type: boolean
+        account:
+          type: string
+          description: Masked identifier (email or masked key), never a secret
+      required:
+        - configured
+    ServicesConfig:
+      type: object
+      properties:
+        jira:
+          $ref: "#/components/schemas/ServerServiceStatus"
+        openai:
+          $ref: "#/components/schemas/ServerServiceStatus"
+      required:
+        - jira
+        - openai
+    ServiceTestRequest:
+      type: object
+      properties:
+        service:
+          type: string
+          enum: [confluence, testit]
+        username:
+          type: string
+        token:
+          type: string
+      required:
+        - service
+    ServiceTestResult:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        account:
+          type: string
+          description: Account display name when the check succeeds
+        reason:
+          type: string
+          enum: [missing_field, unauthorized, unreachable, error]
+        message:
+          type: string
+      required:
+        - ok
+        - message
 

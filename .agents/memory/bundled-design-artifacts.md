@@ -14,3 +14,7 @@ Some design artifacts (e.g. `artifacts/claude-design/index.html`) are self-conta
 **Why:** editing the bundled JSON directly is unreadable and breaks easily; unescaped `</script>` corrupts the bundle.
 
 Also: if `screenshot type=app_preview` gets ERR_CONNECTION_REFUSED (shared proxy on :80 not listening), screenshot via `type=external_url` with `https://$REPLIT_DEV_DOMAIN/` instead.
+
+To verify interaction-gated UI (modals, hidden states): temporarily flip the default state flag (e.g. `modalOpen: true`), repack, screenshot, then revert and repack — the screenshot tool cannot click.
+
+The prototype can call the real API server: fetch('/api/...') works through the shared :80 proxy (design artifact at `/`, api at `/api`).
