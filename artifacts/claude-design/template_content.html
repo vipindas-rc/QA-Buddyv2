@@ -195,7 +195,8 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 </style>
 <script src="fad43d71-64c3-4262-bbec-ebc516eb76ad"></script>
 <style>
-  body { margin:0; background: var(--neutral-b5); font-family: var(--font-family); }
+  html { min-height:100%; }
+  body { margin:0; min-height:100vh; background: linear-gradient(180deg, #0d3F78 0%, #1064AD 50%, #DBEAFE 100%) fixed; font-family: var(--font-family); }
   input, textarea { font-family: var(--font-family); }
   input::placeholder, textarea::placeholder { color: var(--neutral-b3); }
   .tcg-field:focus { border-color: var(--primary-f) !important; box-shadow: 0 0 0 3px var(--primary-t10); }
@@ -213,17 +214,17 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
   <div style="width:100%; max-width:1120px; display:flex; flex-direction:column; gap:20px;">
 
     <!-- Header -->
-    <div style="background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px;">
-      <div style="display:flex; align-items:center; gap:14px;">
-        <div style="width:44px; height:44px; border-radius:var(--radius-md); background:var(--ai-accent-gradient); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-xs-ai);">
+    <div style="background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden;">
+    <div style="padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+        <div style="width:42px; height:42px; flex:none; border-radius:var(--radius-md); background:var(--ai-accent-gradient); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-xs-ai);">
           <svg viewBox="0 0 32 32" fill="#fff" style="width:24px;height:24px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.75-0.216 1.327-0.788 1.566-1.497 0.078-0.232 0.12-0.479 0.12-0.733 0-1.011-0.665-1.909-1.614-2.213l-3.443-0.996zM29 6.246c1.529 0.507 1.944 0.923 2.45 2.455 0.225 0.665 1.135 0.665 1.36 0-0-0.001 0.415-1.417 1.944-1.923"></path><path d="M21.064 7.275c2.293 0.76 2.916 1.385 3.675 3.683 0.337 0.997 1.703 0.997 2.040 0 0.759-2.298 1.382-2.923 3.675-3.683 0.995-0.338 0.995-1.707 0-2.044-2.293-0.76-2.917-1.385-3.675-3.683-0.337-0.997-1.703-0.997-2.040 0-0.759 2.298-1.382 2.923-3.675 3.683-0.489 0.169-0.742 0.591-0.742 1.031s0.253 0.862 0.742 1.014z"></path></svg>
         </div>
-        <div>
+        <div style="min-width:0;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <h1 style="font-size:20px; line-height:26px; font-weight:700; color:var(--neutral-b1); margin:0;">AI Test Case Generator</h1>
-            <span style="font-size:11px; font-weight:600; letter-spacing:.2px; text-transform:uppercase; color:var(--ai-accent-0); background:var(--ai-t10); padding:3px 8px; border-radius:var(--radius-xs);">AI</span>
+            <h1 style="font-size:18px; line-height:24px; font-weight:700; letter-spacing:-0.2px; color:var(--neutral-b1); margin:0;">QA Buddy</h1>
+            <span style="font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--ai-accent-0); background:var(--ai-t10); border:1px solid var(--ai-t20); padding:2px 8px; border-radius:var(--radius-full);">AI</span>
           </div>
-          <p style="font-size:13px; line-height:18px; color:var(--neutral-b2); margin:3px 0 0; max-width:560px;">Update existing testcases and generate missing coverage — Jira keywords, UI context, review, and push when ready.</p>
         </div>
       </div>
       <div style="position:relative; display:flex; align-items:center; gap:10px;">
@@ -238,9 +239,12 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
         <!-- Service access: opens a focused modal -->
         <button onclick="{{ openModal }}" title="Service access" class="tcg-btn-ghost" style="position:relative; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:var(--radius-md); border:1px solid {{ connBorder }}; background:{{ connBg }}; color:var(--neutral-b1); cursor:pointer;">
           <svg viewBox="0 0 32 32" fill="currentColor" style="width:20px;height:20px;"><path d="M16 10.822c4.366 0 5.192 0.793 5.2 4.985v0.387c-0.008 4.192-0.834 4.988-5.2 4.988l-0.787-0.010c-3.48-0.095-4.308-0.92-4.403-4.388l-0.010-0.784c0-4.404 0.779-5.178 5.2-5.178zM16 13.222c-1.070 0-1.75 0.050-2.199 0.141-0.197 0.040-0.305 0.080-0.358 0.104-0.023 0.052-0.062 0.158-0.102 0.348-0.091 0.444-0.141 1.119-0.141 2.184s0.050 1.74 0.141 2.185c0.039 0.192 0.079 0.298 0.102 0.35 0.052 0.023 0.161 0.064 0.358 0.104 0.449 0.092 1.128 0.142 2.198 0.142 1.051 0 1.728-0.051 2.177-0.142 0.216-0.044 0.331-0.089 0.384-0.113 0.021-0.045 0.057-0.137 0.094-0.302 0.089-0.404 0.143-1.028 0.145-2.030v-0.382l-0.011-0.685c-0.020-0.618-0.068-1.046-0.134-1.349-0.036-0.165-0.072-0.256-0.093-0.302-0.053-0.025-0.168-0.069-0.384-0.113-0.45-0.091-1.126-0.141-2.177-0.141z"></path><path d="M20.181 1.082l0.58 2.702 0.006 0.032c0.253 1.146 0.917 2.138 1.842 2.823l0.243 0.181 0.139 0.099c0.771 0.526 1.704 0.834 2.708 0.834 0.173 0 0.344-0.009 0.492-0.025l2.748-0.283 2.584 7.954-2.6 1.509-0.006-0.002c-1.168 0.677-1.731 1.818-2 2.656l-0.049 0.159c-0.132 0.461-0.202 0.948-0.202 1.452 0 0.77 0.164 1.502 0.448 2.128l1.059 2.392-6.763 4.916-2.283-2.045c-0.811-0.728-1.846-1.128-2.918-1.128h-0.435c-1.123 0-2.147 0.428-2.912 1.128l-2.28 2.045-6.763-4.916 1.058-2.392-0.013 0.033c0.297-0.659 0.463-1.391 0.463-2.162 0-0.574-0.092-1.127-0.251-1.607-0.269-0.84-0.832-1.982-2.003-2.659l-2.6-1.509 2.586-7.954 2.726 0.28c0.171 0.019 0.345 0.028 0.52 0.028 1.069-0 2.055-0.35 2.839-0.933l0.015-0.011c1.066-0.789 1.842-1.948 2.143-3.325l0.518-2.403h8.36zM13.757 3.484l-0.109 0.507-0.009 0.052c-0.421 1.913-1.529 3.57-3.073 4.713l0.020-0.013c-1.189 0.888-2.665 1.414-4.264 1.414-0.267 0-0.532-0.014-0.759-0.040l-0.819-0.083-1.384 4.263 0.92 0.537c1.427 0.828 2.523 2.25 3.083 4.002l-0.015-0.054c0.248 0.753 0.383 1.559 0.383 2.396 0 1.122-0.242 2.187-0.655 3.098l-0.274 0.621 3.63 2.635 0.83-0.747c1.199-1.082 2.786-1.742 4.527-1.745h0.423c1.743 0.001 3.331 0.663 4.524 1.742l0.834 0.749 3.629-2.634-0.273-0.621 0.020 0.048c-0.434-0.961-0.676-2.027-0.676-3.15 0-0.837 0.134-1.642 0.367-2.342l-0.001 0.001c0.56-1.75 1.654-3.173 3.084-4l0.92-0.536-1.384-4.264-0.819 0.084c-1.779 0.187-3.565-0.299-5.005-1.363l-0.26-0.19c-1.37-1.015-2.368-2.505-2.758-4.274l-0.173-0.805h-4.483z"></path></svg>
+          <sc-if value="{{ showConnDot }}" hint-placeholder-val="{{ true }}">
           <span style="position:absolute; top:8px; right:8px; width:8px; height:8px; border-radius:50%; background:var(--warning); border:1.5px solid #fff;"></span>
+          </sc-if>
         </button>
       </div>
+    </div>
     </div>
 
     <!-- Main panel -->
@@ -250,13 +254,16 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
       <div>
         <!-- Stepper — revealed only after the first extraction -->
         <sc-if value="{{ showWizard }}" hint-placeholder-val="{{ true }}">
-        <div style="background:var(--neutral-b5); border-radius:var(--radius-md); padding:26px 32px; margin-bottom:24px; display:flex; align-items:flex-start;">
+        <div style="background:var(--neutral-b5); border-radius:var(--radius-md); padding:12px 18px; margin-bottom:24px; display:flex; align-items:center; width:100%; box-sizing:border-box;">
           <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
-            <div style="display:flex; align-items:flex-start; flex:{{ s.flex }}; min-width:0;">
-              <button onclick="{{ s.onClick }}" style="display:flex; flex-direction:column; align-items:center; gap:8px; background:transparent; border:0; cursor:pointer; flex:none; width:96px;">
+            <div style="{{ s.cellStyle }}">
+              <sc-if value="{{ s.showConnector }}" hint-placeholder-val="{{ true }}">
+                <div style="{{ s.connectorStyle }}"></div>
+              </sc-if>
+              <button onclick="{{ s.onClick }}" style="display:inline-flex; align-items:center; gap:9px; background:transparent; border:0; cursor:{{ s.cursor }}; padding:0; flex:none;">
                 <div style="{{ s.circleStyle }}">
                   <sc-if value="{{ s.done }}" hint-placeholder-val="{{ true }}">
-                    <svg viewBox="0 0 32 32" fill="#fff" style="width:18px;height:18px;"><path d="M28.981 4.701l-16.84 23.139-8.981-9 1.68-1.68 7.019 7 15.16-20.859z"></path></svg>
+                    <svg viewBox="0 0 32 32" fill="#fff" style="width:13px;height:13px;"><path d="M28.981 4.701l-16.84 23.139-8.981-9 1.68-1.68 7.019 7 15.16-20.859z"></path></svg>
                   </sc-if>
                   <sc-if value="{{ s.showNum }}" hint-placeholder-val="{{ true }}">
                     <span>{{ s.n }}</span>
@@ -264,11 +271,36 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                 </div>
                 <span style="{{ s.labelStyle }}">{{ s.label }}</span>
               </button>
-              <sc-if value="{{ s.showConnector }}" hint-placeholder-val="{{ true }}">
-                <div style="{{ s.connectorStyle }}"></div>
-              </sc-if>
             </div>
           </sc-for>
+        </div>
+        </sc-if>
+
+        <!-- Context recap: Jira story + init/epic + extracted keywords, above the step panel -->
+        <sc-if value="{{ showCtxRecap }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-bottom:24px; padding:14px 16px; background:var(--primary-t10); border-radius:var(--radius-md);">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; padding:2px 6px; border-radius:var(--radius-xs); background:var(--primary-b); color:#fff; flex:none;">Story</span>
+            <span style="font-size:13px; font-weight:600; color:var(--primary-f-high-contrast); flex:none;">{{ storyKey }}</span>
+            <span style="font-size:13px; color:var(--neutral-b1); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:140px;">{{ storyTitle }}</span>
+            <button onclick="{{ goStep1 }}" style="border:0; background:transparent; color:var(--primary-f); font-size:13px; font-weight:600; cursor:pointer; padding:0; flex:none;">Edit</button>
+          </div>
+          <sc-if value="{{ hasCtxRefs }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">
+            <sc-for list="{{ ctxRefs }}" as="c" hint-placeholder-count="2">
+              <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--neutral-b1); background:#fff; border:1px solid var(--border); padding:3px 10px 3px 5px; border-radius:var(--radius-full);"><span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; padding:1px 5px; border-radius:var(--radius-xs); background:var(--neutral-b5); color:var(--neutral-b2);">{{ c.type }}</span>{{ c.value }}</span>
+            </sc-for>
+          </div>
+          </sc-if>
+          <div style="display:flex; align-items:center; gap:8px; margin:12px 0 10px;">
+            <svg viewBox="0 0 32 32" fill="var(--success-f)" style="width:15px;height:15px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
+            <span style="font-size:13px; font-weight:600; color:var(--neutral-b1);">Extracted {{ keywordCount }} keywords</span>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <sc-for list="{{ keywords }}" as="k" hint-placeholder-count="6">
+              <span style="font-size:13px; font-weight:500; color:var(--primary-f-high-contrast); background:#fff; border:1px solid var(--primary-t20); padding:5px 12px; border-radius:var(--radius-full);">{{ k }}</span>
+            </sc-for>
+          </div>
         </div>
         </sc-if>
 
@@ -279,7 +311,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
           <sc-if value="{{ showStartHint }}" hint-placeholder-val="{{ true }}">
           <div style="margin:-10px 0 22px; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--neutral-b3); font-weight:500;">
             <svg viewBox="0 0 32 32" fill="var(--neutral-b3)" style="width:14px;height:14px;"><path d="M17.41 8.586c0.364 0.35 0.591 0.841 0.591 1.385 0 0.548-0.226 1.037-0.59 1.384l-0.001 0.001c-0.37 0.381-0.878 0.592-1.41 0.586-0.528 0.003-1.034-0.208-1.402-0.586-0.369-0.348-0.599-0.84-0.599-1.385 0-0.005 0-0.012 0-0.018 0-0.368 0.104-0.712 0.283-1.005l-0.005 0.008c0.179-0.298 0.427-0.547 0.725-0.725 0.28-0.169 0.618-0.269 0.98-0.269 0.55 0 1.020 0.195 1.412 0.586zM14.8 23h2.4v-8h-2.4zM31.2 16c0 8.837-7.163 16-16 16s-16-7.163-16-16 7.163-16 16-16 16 7.163 16 16zM28.8 16c0-7.511-6.089-13.6-13.6-13.6s-13.6 6.089-13.6 13.6 6.089 13.6 13.6 13.6 13.6-6.089 13.6-13.6z"></path></svg>
-            After you extract keywords, we'll guide you through hints, UI context, and review.
+            After you extract keywords, we'll guide you through behavioral hints, UI context, and review.
           </div>
           </sc-if>
 
@@ -358,29 +390,63 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
           </div>
           </sc-if>
 
-          <!-- STEP 2 — hints + UI context combined -->
+          <!-- STEP 2 — behavioral hints -->
           <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ true }}">
           <div>
-            <label style="display:block; font-size:13px; font-weight:600; color:var(--neutral-b1); margin-bottom:8px;">Additional hints <span style="font-weight:400; color:var(--neutral-b3);">(optional)</span></label>
-            <textarea value="{{ hints }}" onchange="{{ onHints }}" placeholder="Add edge cases, business rules, or areas to focus on — e.g. 'cover session timeout and invalid SSO tokens'." class="tcg-field" style="width:100%; box-sizing:border-box; min-height:104px; padding:12px 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; line-height:20px; color:var(--neutral-b0); outline:none; resize:vertical; transition:border-color var(--duration-fast) var(--easing-fast-in);"></textarea>
-            <div style="margin-top:16px;">
-              <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.2px; color:var(--neutral-b3); margin-bottom:10px;">Suggested focus areas</div>
-              <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="5">
-                  <button onclick="{{ sg.onClick }}" style="{{ sg.style }}">{{ sg.label }}</button>
-                </sc-for>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">
+              <label style="font-size:13px; font-weight:600; color:var(--neutral-b1);">Behavioral hints &amp; test scenarios <span style="font-weight:400; color:var(--neutral-b3);">(optional)</span></label>
+              <button onclick="{{ toggleHintsHelp }}" style="display:inline-flex; align-items:center; gap:6px; border:0; background:transparent; color:var(--primary-f); font-size:13px; font-weight:600; cursor:pointer; padding:0;">
+                <svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px;"><path d="M17.41 8.586c0.364 0.35 0.591 0.841 0.591 1.385 0 0.548-0.226 1.037-0.59 1.384l-0.001 0.001c-0.37 0.381-0.878 0.592-1.41 0.586-0.528 0.003-1.034-0.208-1.402-0.586-0.369-0.348-0.599-0.84-0.599-1.385 0-0.005 0-0.012 0-0.018 0-0.368 0.104-0.712 0.283-1.005l-0.005 0.008c0.179-0.298 0.427-0.547 0.725-0.725 0.28-0.169 0.618-0.269 0.98-0.269 0.55 0 1.020 0.195 1.412 0.586zM14.8 23h2.4v-8h-2.4zM31.2 16c0 8.837-7.163 16-16 16s-16-7.163-16-16 7.163-16 16-16 16 7.163 16 16zM28.8 16c0-7.511-6.089-13.6-13.6-13.6s-13.6 6.089-13.6 13.6 6.089 13.6 13.6 13.6 13.6-6.089 13.6-13.6z"></path></svg>
+                What makes good behavioral hints?
+              </button>
+            </div>
+            <sc-if value="{{ hintsHelpOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-bottom:12px; padding:16px 18px; background:var(--neutral-b5); border:1px solid var(--border); border-radius:var(--radius-sm);">
+              <div style="font-size:13px; font-weight:700; color:var(--neutral-b1); margin-bottom:8px;">Good hints are specific and actionable</div>
+              <div style="display:flex; flex-direction:column; gap:5px; font-size:13px; line-height:19px; color:var(--neutral-b1);">
+                <div style="display:flex; gap:8px;"><span style="color:var(--success-f); font-weight:700; flex:none;">✓</span><span>&ldquo;Dropdown should auto-close when clicking outside&rdquo;</span></div>
+                <div style="display:flex; gap:8px;"><span style="color:var(--success-f); font-weight:700; flex:none;">✓</span><span>&ldquo;Phone number validation: must be exactly 10 digits&rdquo;</span></div>
+                <div style="display:flex; gap:8px;"><span style="color:var(--success-f); font-weight:700; flex:none;">✓</span><span>&ldquo;E2E: sign in as agent → filter by &lsquo;Completed&rsquo; → verify count matches API&rdquo;</span></div>
+                <div style="display:flex; gap:8px;"><span style="color:var(--danger-f); font-weight:700; flex:none;">✕</span><span>&ldquo;Test the dropdown&rdquo; <span style="color:var(--neutral-b2);">(too vague)</span></span></div>
+                <div style="display:flex; gap:8px;"><span style="color:var(--danger-f); font-weight:700; flex:none;">✕</span><span>&ldquo;Make sure it works&rdquo; <span style="color:var(--neutral-b2);">(not actionable)</span></span></div>
+              </div>
+              <div style="font-size:13px; font-weight:700; color:var(--neutral-b1); margin:14px 0 8px;">Categories to cover</div>
+              <div style="display:flex; flex-direction:column; gap:5px; font-size:13px; line-height:19px; color:var(--neutral-b2);">
+                <div><span style="font-weight:600; color:var(--neutral-b1);">UI state management:</span> session persistence, cache behavior, state transitions</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">User interactions:</span> click, hover, drag, keyboard shortcuts</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">Data validation:</span> input constraints, format requirements, error messages</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">Integration points:</span> API calls, third-party services, cross-component communication</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">Boundary conditions:</span> empty states, max limits, minimum values</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">Accessibility:</span> keyboard navigation, screen readers, color contrast</div>
+                <div><span style="font-weight:600; color:var(--neutral-b1);">Security:</span> XSS prevention, CSRF tokens, session timeout</div>
               </div>
             </div>
+            </sc-if>
+            <textarea value="{{ hints }}" onchange="{{ onHints }}" placeholder="Describe UI behaviors, validations, error handling, E2E flows, and edge cases" class="tcg-field" style="width:100%; box-sizing:border-box; min-height:180px; padding:12px 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; line-height:20px; color:var(--neutral-b0); outline:none; resize:vertical; transition:border-color var(--duration-fast) var(--easing-fast-in);"></textarea>
+            <div style="margin-top:12px;">
+              <button onclick="{{ fillExampleHints }}" class="tcg-btn-ghost" style="display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:13px; font-weight:600; cursor:pointer;">
+                <svg viewBox="0 0 32 32" fill="var(--ai-accent-0)" style="width:15px;height:15px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.949-0.304 1.614-1.202 1.614-2.213 0-1.011-0.665-1.909-1.614-2.213z"></path></svg>
+                Generate example hints
+              </button>
+            </div>
 
-            <div style="height:1px; background:var(--neutral-b5); margin:24px 0;"></div>
+            <div style="display:flex; justify-content:space-between; margin-top:24px;">
+              <button onclick="{{ goStep1 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
+              <button onclick="{{ goStep3 }}" class="tcg-btn-primary" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-primary);">Continue to UI context<svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;"><path d="M29.701 16l-9.341 9.341-1.701-1.701 6.442-6.44h-23.101v-2.4h23.101l-6.442-6.44 1.701-1.701z"></path></svg></button>
+            </div>
+          </div>
+          </sc-if>
 
-            <div style="font-size:15px; font-weight:600; color:var(--neutral-b1); margin-bottom:4px;">UI context <span style="font-weight:400; color:var(--neutral-b3);">(optional)</span></div>
-            <p style="font-size:13px; line-height:19px; color:var(--neutral-b2); margin:0 0 14px;">Add screenshots of the screens under test so the AI can ground test cases in the real UI.</p>
+          <!-- STEP 3 — UI context -->
+          <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <label style="display:block; font-size:13px; font-weight:600; color:var(--neutral-b1); margin-bottom:8px;">Review count <span style="font-weight:400; color:var(--neutral-b3);">How many matching test cases to show first</span></label>
+            <input type="number" min="1" max="100" value="{{ reviewCount }}" onchange="{{ onReviewCount }}" class="tcg-field" style="width:160px; box-sizing:border-box; height:44px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in); margin-bottom:18px;">
             <div onclick="{{ addFile }}" class="tcg-drop" style="border:1.5px dashed var(--neutral-b4); border-radius:var(--radius-md); padding:28px; text-align:center; cursor:pointer; transition:all var(--duration-fast) var(--easing-fast-in);">
               <div style="width:44px; height:44px; margin:0 auto 10px; border-radius:50%; background:var(--primary-t10); display:flex; align-items:center; justify-content:center;">
                 <svg viewBox="0 0 32 32" fill="var(--primary-f)" style="width:20px;height:20px;"><path d="M29.848 28.152l-7.134-7.134c1.548-1.898 2.486-4.347 2.486-7.014 0-6.176-5.024-11.2-11.2-11.2s-11.2 5.024-11.2 11.2 5.024 11.2 11.2 11.2c2.667 0 5.116-0.938 7.033-2.502l7.133 7.134zM5.2 14c0-4.853 3.947-8.8 8.8-8.8s8.8 3.947 8.8 8.8c0 4.851-3.947 8.8-8.8 8.8-4.858-0.005-8.795-3.942-8.8-8.799z"></path></svg>
               </div>
-              <div style="font-size:14px; font-weight:600; color:var(--neutral-b1);">Drop UI screenshots here or click to browse</div>
+              <div style="font-size:14px; font-weight:600; color:var(--neutral-b1);">Drop Figma screenshots here or click to browse</div>
               <div style="font-size:13px; color:var(--neutral-b2); margin-top:4px;">PNG or JPG up to 10 MB.</div>
             </div>
             <sc-if value="{{ hasFiles }}" hint-placeholder-val="{{ true }}">
@@ -400,15 +466,79 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
             </div>
             </sc-if>
 
+            <sc-if value="{{ showUiProgress }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:18px; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 18px;">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+                <div>
+                  <div style="font-size:14px; font-weight:700; color:var(--neutral-b1);">{{ uiStageTitle }}</div>
+                  <div style="font-size:13px; line-height:18px; color:var(--neutral-b2); margin-top:2px;">{{ uiStageDesc }}</div>
+                </div>
+                <span style="font-size:13px; font-weight:700; color:var(--primary-f-high-contrast); flex:none;">{{ uiPct }}</span>
+              </div>
+              <div style="height:5px; background:var(--neutral-b5); border-radius:3px; margin-top:12px; overflow:hidden;">
+                <div style="{{ uiBarStyle }}"></div>
+              </div>
+              <div style="display:flex; margin-top:12px;">
+                <sc-for list="{{ uiStages }}" as="ust" hint-placeholder-count="3">
+                  <div style="flex:1; display:flex; align-items:center; gap:7px;">
+                    <span style="{{ ust.dotStyle }}"></span>
+                    <span style="{{ ust.labelStyle }}">{{ ust.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ showUiScreens }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:14px; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--neutral-b2); margin-bottom:8px;">Detected Figma screens</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                  <sc-for list="{{ detectedScreens }}" as="ds" hint-placeholder-count="8">
+                    <span style="font-size:12px; font-weight:600; color:var(--success-high-contrast); background:var(--success-t10); padding:4px 10px; border-radius:var(--radius-full);">{{ ds }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="margin-top:10px; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--neutral-b2); margin-bottom:8px;">Jira-relevant screens</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                  <sc-for list="{{ jiraScreens }}" as="js" hint-placeholder-count="6">
+                    <span style="font-size:12px; font-weight:600; color:var(--success-high-contrast); background:var(--success-t10); padding:4px 10px; border-radius:var(--radius-full);">{{ js }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+              <sc-if value="{{ showUiScoring }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                <div style="padding:12px 14px; background:var(--neutral-b5); border-radius:var(--radius-sm);">
+                  <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--neutral-b3);">Search mode</div>
+                  <div style="font-size:14px; font-weight:600; color:var(--neutral-b1); margin-top:4px;">Jira keywords + UI screens</div>
+                </div>
+                <div style="padding:12px 14px; background:var(--neutral-b5); border-radius:var(--radius-sm);">
+                  <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--neutral-b3);">Retrieved candidates</div>
+                  <div style="font-size:20px; font-weight:700; color:var(--primary-f-high-contrast); margin-top:2px;">{{ candidateCount }}</div>
+                </div>
+                <div style="padding:12px 14px; background:var(--neutral-b5); border-radius:var(--radius-sm); grid-column:1 / -1;">
+                  <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--neutral-b3);">Scoring</div>
+                  <div style="font-size:14px; font-weight:600; color:var(--neutral-b1); margin-top:4px;">Keyword priority + screen relevance.</div>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
             <div style="display:flex; justify-content:space-between; margin-top:24px;">
-              <button onclick="{{ goStep1 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
-              <button onclick="{{ goStep3 }}" class="tcg-btn-primary" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-primary);">Continue to review<svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;"><path d="M29.701 16l-9.341 9.341-1.701-1.701 6.442-6.44h-23.101v-2.4h23.101l-6.442-6.44 1.701-1.701z"></path></svg></button>
+              <button onclick="{{ goStep2 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
+              <div style="display:flex; gap:12px;">
+                <button onclick="{{ skipUi }}" class="tcg-btn-ghost" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--primary-f); font-size:14px; font-weight:600; cursor:pointer;">Continue without screenshots<svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px;"><path d="M29.701 16l-9.341 9.341-1.701-1.701 6.442-6.44h-23.101v-2.4h23.101l-6.442-6.44 1.701-1.701z"></path></svg></button>
+                <button onclick="{{ extractUi }}" style="{{ extractUiStyle }}">
+                  <sc-if value="{{ extractingUI }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px; animation:tcg-spin .8s linear infinite;"><path d="M16 3.2c-7.069 0-12.8 5.731-12.8 12.8h2.4c0-5.744 4.656-10.4 10.4-10.4z"></path></svg></sc-if>
+                  <sc-if value="{{ notExtractingUI }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;"><path d="M29.848 28.152l-7.134-7.134c1.548-1.898 2.486-4.347 2.486-7.014 0-6.176-5.024-11.2-11.2-11.2s-11.2 5.024-11.2 11.2 5.024 11.2 11.2 11.2c2.667 0 5.116-0.938 7.033-2.502l7.133 7.134zM5.2 14c0-4.853 3.947-8.8 8.8-8.8s8.8 3.947 8.8 8.8c0 4.851-3.947 8.8-8.8 8.8-4.858-0.005-8.795-3.942-8.8-8.799z"></path></svg></sc-if>
+                  {{ extractUiLabel }}
+                </button>
+              </div>
             </div>
           </div>
           </sc-if>
 
-          <!-- STEP 3 — review / generate -->
-          <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ true }}">
+          <!-- STEP 4 — review / generate -->
+          <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ true }}">
           <div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
               <sc-for list="{{ summary }}" as="row" hint-placeholder-count="4">
@@ -430,7 +560,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
             </sc-if>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px;">
-              <button onclick="{{ goStep2 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
+              <button onclick="{{ goStep3 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
               <button onclick="{{ generate }}" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 22px; border:0; border-radius:var(--radius-md); background:var(--ai-accent-gradient); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-ai);">
                 <svg viewBox="0 0 32 32" fill="#fff" style="width:18px;height:18px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.949-0.304 1.614-1.202 1.614-2.213 0-1.011-0.665-1.909-1.614-2.213z"></path></svg>
                 {{ generateLabel }}
@@ -470,7 +600,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
         <p style="font-size:14px; line-height:20px; color:var(--neutral-b2); margin:0 0 24px;">Pull the latest stories and push generated test cases back to Jira.</p>
         <div style="display:flex; align-items:center; gap:16px; padding:18px; background:var(--neutral-b5); border-radius:var(--radius-md);">
           <div style="flex:1;">
-            <div style="font-size:15px; font-weight:600; color:var(--neutral-b1);">Last synced {{ lastSynced }}</div>
+            <div style="font-size:15px; font-weight:600; color:var(--neutral-b1);">{{ syncHeadline }}</div>
             <div style="font-size:13px; color:var(--neutral-b2);">42 stories · 128 test cases in sync.</div>
           </div>
           <button onclick="{{ doSync }}" class="tcg-btn-primary" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-primary);">
@@ -533,12 +663,13 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 class Component extends DCLogic {
   state = {
     tab: 'generate', step: 1,
-    refs: 'INIT-16664, ROE-13, EVAA-31997',
-    extracted: false, analyzing: false, hints: '', picked: [],
+    refs: '',
+    extracted: false, analyzing: false, hints: '', hintsHelpOpen: false,
+    reviewCount: 10, extractingUI: false, uiProgress: 0, uiStage: 0, uiDone: false,
     files: [], generated: false, syncing: false,
     modalOpen: false, credsSaved: false, cUser:'', cToken:'', tToken:'',
     resolved: {},
-    lastSynced: 'Jul 6, 10:44 PM'
+    lastSyncedAt: null, tick: 0
   };
 
   TITLES = {
@@ -549,7 +680,23 @@ class Component extends DCLogic {
   };
   titleFor(k){ return this.TITLES[k] || (k + ' — resolved from Jira'); }
 
-  componentDidMount(){ this.resolveRefs(this.state.refs); }
+  componentDidMount(){
+    if (this.state.refs.trim()) this.resolveRefs(this.state.refs);
+    this._clock = setInterval(() => { if (this.state.lastSyncedAt) this.setState(st => ({ tick: st.tick + 1 })); }, 30000);
+  }
+
+  componentWillUnmount(){ if (this._clock) clearInterval(this._clock); }
+
+  relTime(ts){
+    if (!ts) return 'Not synced yet';
+    const d = Date.now() - ts;
+    if (d < 60000) return 'Just now';
+    const m = Math.floor(d / 60000);
+    if (m < 60) return m + (m === 1 ? ' min ago' : ' min ago');
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + (h === 1 ? ' hr ago' : ' hrs ago');
+    return new Date(ts).toLocaleDateString();
+  }
 
   resolveRefs(str){
     const keys = [...new Set(this.parse(str).chips.map(c => c.value))];
@@ -569,7 +716,42 @@ class Component extends DCLogic {
   }
 
   KEYWORDS = ['login','SSO authentication','session timeout','MFA','password reset','invalid credentials','remember me','account lockout'];
-  SUGGESTIONS = ['Boundary values','Error handling','Accessibility','Localization','Concurrency','Negative paths'];
+
+  EXAMPLE_HINTS = [
+    'UI BEHAVIORS',
+    '- Dropdown should remember last selected filter across sessions',
+    '- Disposition list should auto-close when clicking outside',
+    '',
+    'VALIDATION RULES',
+    '- Search field accepts a maximum of 100 characters',
+    '- Date range cannot end before it starts',
+    '',
+    'ERROR SCENARIOS',
+    '- Handle API timeout gracefully with a retry option',
+    '- Show a clear message when call history fails to load',
+    '',
+    'E2E FLOWS',
+    '- Sign in as agent, apply a filter, make a call, check history, verify the disposition saved',
+    '',
+    'EDGE CASES',
+    '- Special characters in disposition names (Chinese, Arabic, emoji)',
+    '- Agent with zero calls in the selected date range',
+    '',
+    'CROSS-SYSTEM VALIDATION',
+    '- Verify the API response matches the UI display',
+    '- Disposition saved in CRM matches the one shown in history',
+    '',
+    'LOCALIZATION',
+    '- Test with Spanish and Japanese locales',
+    '- Long translated labels should not truncate filters',
+    '',
+    'PERFORMANCE',
+    '- Page load time should stay under 2 seconds',
+    '- History list stays responsive with 10,000 records'
+  ].join('\n');
+
+  DETECTED_SCREENS = ['Supervisor','Agent type','Agent','From','RingCentral, Inc.','Pending disposition','Interaction','Categories','Active interactions','Interactions rollup','Talk time','Pending disp.','State duration','RingCX Agent','Subject','Agents','Average time per call','Login','Interactions','State','Channel','Product','Longest active interaction'];
+  JIRA_SCREENS = [['Supervisor','0.90'],['Interactions','0.90'],['Agents','0.88'],['Interaction','0.82'],['Agent','0.72'],['Active interactions','0.70'],['State','0.68'],['Agent type','0.66']];
 
   set(k){ return (e)=> this.setState({ [k]: e.target.value }); }
 
@@ -589,43 +771,48 @@ class Component extends DCLogic {
     const s = this.state;
     const stepDefs = [
       { n:1, label:'Jira & requirements' },
-      { n:2, label:'Hints & UI context' },
-      { n:3, label:'Review / generate' },
+      { n:2, label:'Behavioral hints' },
+      { n:3, label:'UI context' },
+      { n:4, label:'Review / generate' },
     ];
     const steps = stepDefs.map((d, i) => {
       const done = d.n < s.step, active = d.n === s.step;
       const circleStyle = {
-        width:'40px', height:'40px', borderRadius:'50%', display:'flex',
-        alignItems:'center', justifyContent:'center', fontSize:'15px', fontWeight:700,
-        transition:'all .1618s cubic-bezier(0.382,0,0.786,1)',
+        width:'26px', height:'26px', borderRadius:'50%', display:'flex', flex:'none',
+        alignItems:'center', justifyContent:'center', fontSize:'12px', fontWeight:700,
+        transition:'all .1618s cubic-bezier(0.382,0,0.786,1)', boxSizing:'border-box',
         ...(active
-          ? { background:'var(--primary-b)', color:'#fff', boxShadow:'0 0 0 4px var(--primary-t20)' }
+          ? { background:'var(--primary-b)', color:'#fff', boxShadow:'0 0 0 3px var(--primary-t20)' }
           : done
             ? { background:'var(--primary-b)', color:'#fff' }
             : { background:'#fff', color:'var(--neutral-b3)', border:'1.5px solid var(--neutral-b4)' })
       };
       const labelStyle = {
-        fontSize:'13px', fontWeight: active?700:500, textAlign:'center',
+        fontSize:'13px', fontWeight: active?700:500, whiteSpace:'nowrap',
         color: active ? 'var(--primary-f-high-contrast)' : done ? 'var(--neutral-b1)' : 'var(--neutral-b2)'
       };
+      const prevDone = i > 0 && stepDefs[i-1].n < s.step;
       const connectorStyle = {
-        flex:1, height:'2px', marginTop:'19px', minWidth:'24px',
-        marginLeft:'-24px', marginRight:'-24px', borderRadius:'1px',
-        background: done ? 'var(--primary-b)' : 'var(--neutral-b4)'
+        flex:'1', height:'2px', minWidth:'24px', margin:'0 16px', borderRadius:'1px',
+        background: prevDone ? 'var(--primary-b)' : 'var(--neutral-b4)'
       };
+      const cellStyle = i === 0
+        ? { display:'flex', alignItems:'center', flex:'none' }
+        : { display:'flex', alignItems:'center', flex:'1', minWidth:'0' };
+      const clickable = d.n <= s.step || s.extracted;
       return {
-        ...d, done, active, showNum: !done, showConnector: i < stepDefs.length-1,
-        flex: i < stepDefs.length-1 ? 1 : 0, circleStyle, labelStyle, connectorStyle,
-        onClick: () => { if (d.n <= s.step || s.extracted) this.setState({ step:d.n }); }
+        ...d, done, active, showNum: !done, showConnector: i > 0,
+        cellStyle, circleStyle, labelStyle, connectorStyle, cursor: clickable ? 'pointer' : 'default',
+        onClick: () => { if (clickable) this.setState({ step:d.n }); }
       };
     });
 
-    const stageMap = {1:'Stage 1 · Jira & requirements',2:'Stage 2 · Hints & UI context',3:'Stage 3 · Review / generate'};
-    const titleMap = {1:'Jira information & requirements',2:'Hints & UI context',3:'Review and generate'};
+    const titleMap = {1:'Jira information & requirements',2:'Behavioral hints & test scenarios',3:'UI context',4:'Review and generate'};
     const descMap = {
       1:'Enter Jira references — we\u2019ll fetch each ticket, then analyze the story for keywords.',
-      2:'Add optional guidance and screenshots so the AI grounds test cases in the real UI.',
-      3:'Confirm the inputs, then generate test cases and push them to Jira when ready.'
+      2:'Add optional UI behaviors, edge cases, E2E flows, or validation notes to guide missing test case coverage.',
+      3:'Upload Figma screenshots, extract UI context, find matching TestIT cases, and prioritize the results.',
+      4:'Confirm the inputs, then generate test cases and push them to Jira when ready.'
     };
 
     const tab = (id, label) => ({
@@ -635,29 +822,19 @@ class Component extends DCLogic {
       color: s.tab===id ? 'var(--primary-f-high-contrast)' : 'var(--neutral-b2)'
     });
 
-    const chipBase = {
-      fontSize:'13px', fontWeight:500, padding:'6px 13px', borderRadius:'9999px',
-      cursor:'pointer', transition:'all .1618s cubic-bezier(0.382,0,0.786,1)'
-    };
-    const suggestions = this.SUGGESTIONS.map(label => {
-      const on = s.picked.includes(label);
-      return {
-        label,
-        onClick: () => this.setState(st => ({ picked: st.picked.includes(label) ? st.picked.filter(x=>x!==label) : [...st.picked,label] })),
-        style: { ...chipBase, ...(on
-          ? { background:'var(--primary-b)', color:'#fff', border:'1px solid var(--primary-b)' }
-          : { background:'#fff', color:'var(--neutral-b1)', border:'1px solid var(--border)' }) }
-      };
-    });
-
     const badge = (color, bg) => ({ fontSize:'12px', fontWeight:600, padding:'4px 12px', borderRadius:'9999px', color, background:bg, whiteSpace:'nowrap' });
     const svcRow = { display:'inline-flex', alignItems:'center', gap:'8px', fontSize:'13px', fontWeight:600, color:'var(--neutral-b1)', padding:'7px 13px', border:'1px solid var(--border)', borderRadius:'9999px', background:'#fff' };
+    const jiraOk = true; // read from server .env in this prototype
+    const confluenceOk = !!(s.credsSaved && s.cUser.trim() && s.cToken.trim());
+    const testitOk = !!(s.credsSaved && s.tToken.trim());
+    const svcMeta = ok => ok
+      ? { status:'Connected', badgeStyle: badge('var(--success-f)','var(--success-t10)'), dot:'var(--success)' }
+      : { status:'Not configured', badgeStyle: badge('var(--warning-f)','rgba(255,102,0,.1)'), dot:'var(--warning)' };
     const services = [
-      { mark:'J', name:'Jira Cloud', detail:'evaa.atlassian.net · reads stories, writes test cases', status:'Connected', badgeStyle: badge('var(--success-f)','var(--success-t10)'), dot:'var(--success)', rowStyle:svcRow },
-      { mark:'C', name:'Confluence', detail:'Requirement pages and specs', status:'Connected', badgeStyle: badge('var(--success-f)','var(--success-t10)'), dot:'var(--success)', rowStyle:svcRow },
-      { mark:'X', name:'Xray test management', detail:'Push generated test cases to test sets', status:'Action needed', badgeStyle: badge('var(--warning-f)','rgba(255,102,0,.1)'), dot:'var(--warning)', rowStyle:svcRow },
+      { mark:'J', name:'Jira Cloud', detail:'evaa.atlassian.net · reads stories, writes test cases', ok:jiraOk, ...svcMeta(jiraOk), rowStyle:svcRow },
+      { mark:'C', name:'Confluence', detail:'Requirement pages and specs', ok:confluenceOk, ...svcMeta(confluenceOk), rowStyle:svcRow },
+      { mark:'T', name:'TestIT', detail:'Push generated test cases to test runs', ok:testitOk, ...svcMeta(testitOk), rowStyle:svcRow },
     ];
-
     const parsed = this.parse(s.refs);
     const chipWrap = { display:'inline-flex', alignItems:'center', gap:'7px', fontSize:'13px', fontWeight:600, padding:'5px 12px 5px 7px', borderRadius:'9999px' };
     const tagBase = { fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'.3px', padding:'2px 6px', borderRadius:'var(--radius-xs)' };
@@ -689,9 +866,40 @@ class Component extends DCLogic {
     const summary = [
       { label:'User story', value: parsed.story || '—' },
       { label:'Epic / init', value: [parsed.epic, parsed.init].filter(Boolean).join(' · ') || '—' },
-      { label:'Keywords', value: this.KEYWORDS.length + ' extracted' },
-      { label:'UI screenshots', value: (s.files.length || 'No') + (s.files.length===1?' file':' files') },
+      { label:'Keywords', value: s.extracted ? this.KEYWORDS.length + ' extracted' : 'Not extracted yet' },
+      { label:'Behavioral hints', value: s.hints.trim() ? 'Provided' : 'Not provided' },
+      { label:'Review count', value: String(s.reviewCount || 10) + ' matches shown first' },
+      { label:'Figma screenshots', value: s.uiDone
+          ? (s.files.length || 'No') + (s.files.length===1?' file':' files') + ' · 19,616 candidates matched'
+          : 'Skipped' },
     ];
+
+    const uiStageTitles = {1:'Extracting UI context',2:'UI context ready',3:'Prioritizing matches'};
+    const uiStageDescs = {
+      1:'Reading screenshots and detecting visible UI facts. This is usually the longest part.',
+      2:'Now searching TestIT for cases that match the Jira story and detected screens.',
+      3:'Retrieved candidates are in. Scoring and preparing the review list now.'
+    };
+    const uiStageLabels = ['Extract UI facts','Search TestIT','Prioritize matches'];
+    const uiStages = uiStageLabels.map((label, i) => {
+      const n = i + 1;
+      const done = s.uiStage > n || (s.uiStage === 3 && s.uiProgress >= 100);
+      const active = s.uiStage === n && !done;
+      return {
+        label,
+        dotStyle: { width:'9px', height:'9px', borderRadius:'50%', flex:'none',
+          background: done ? 'var(--success)' : active ? 'var(--primary-b)' : 'var(--neutral-b4)' },
+        labelStyle: { fontSize:'12px', fontWeight: active ? 700 : 500,
+          color: done ? 'var(--success-f)' : active ? 'var(--primary-f-high-contrast)' : 'var(--neutral-b3)' }
+      };
+    });
+    const extractUiStyle = {
+      display:'inline-flex', alignItems:'center', gap:'8px', height:'44px', padding:'0 20px',
+      borderRadius:'var(--radius-md)', fontSize:'14px', fontWeight:600,
+      transition:'all .1618s cubic-bezier(0.382,0,0.786,1)',
+      ...(s.extractingUI
+        ? { border:'0', background:'var(--primary-t80)', color:'#fff', cursor:'progress' }
+        : { border:'0', background:'var(--primary-b)', color:'#fff', cursor:'pointer', boxShadow:'var(--shadow-xs-primary)' }) };
 
     return {
       isGenerate: true, isService: false, isSync: false,
@@ -707,24 +915,65 @@ class Component extends DCLogic {
       onCUser:this.set('cUser'), onCToken:this.set('cToken'), onTToken:this.set('tToken'),
       saveCreds: () => this.setState({ credsSaved: true }),
       clearCreds: () => this.setState({ cUser:'', cToken:'', tToken:'', credsSaved:false }),
-      syncStatusLabel: s.syncing ? 'Syncing…' : 'Last synced',
-      syncTimeLabel: s.lastSynced,
+      syncStatusLabel: s.syncing ? 'Syncing…' : (s.lastSyncedAt ? 'Last synced' : 'Sync'),
+      syncTimeLabel: this.relTime(s.lastSyncedAt),
+      showConnDot: services.some(v => !v.ok),
       syncIconColor: s.syncing ? 'var(--primary-f)' : 'var(--neutral-b2)',
-      step: s.step, isStep1:s.step===1, isStep2:s.step===2, isStep3:s.step===3,
-      steps, stageLabel: stageMap[s.step], panelTitle: titleMap[s.step], panelDesc: descMap[s.step],
+      step: s.step, isStep1:s.step===1, isStep2:s.step===2, isStep3:s.step===3, isStep4:s.step===4,
+      steps,
+      panelTitle: titleMap[s.step], panelDesc: descMap[s.step],
       refs:s.refs, onRefs:(e)=>{ const v=e.target.value; this.setState({refs:v}); this.resolveRefs(v); },
-      refItems, hasParsed: parsed.chips.length>0, needsStory: !parsed.story, storyKey: parsed.story,
+      refItems, hasParsed: parsed.chips.length>0, needsStory: parsed.chips.length>0 && !parsed.story,
+      storyKey: parsed.story, storyTitle: ((s.resolved[parsed.story]||{}).title) || '',
+      ctxRefs: parsed.chips.filter(c => c.kind === 'muted').map(c => ({ type: c.type, value: c.value })),
+      hasCtxRefs: parsed.chips.some(c => c.kind === 'muted'),
+      showCtxRecap: s.extracted && s.step === 2,
       extracted:s.extracted, analyzing:s.analyzing, notAnalyzing:!s.analyzing,
       keywords:this.KEYWORDS, keywordCount:this.KEYWORDS.length,
+      hints: s.hints, onHints: this.set('hints'),
       extractStyle, extractLabel: s.analyzing ? 'Extracting…' : (s.extracted ? 'Re-analyze' : 'Analyze'),
       extract: () => {
         if (!parsed.story || s.analyzing) return;
         this.setState({ analyzing:true });
         setTimeout(() => this.setState({ analyzing:false, extracted:true, step:2 }), 1500);
       },
-      suggestions,
+      hintsHelpOpen: s.hintsHelpOpen,
+      toggleHintsHelp: () => this.setState(st => ({ hintsHelpOpen: !st.hintsHelpOpen })),
+      fillExampleHints: () => this.setState({ hints: this.EXAMPLE_HINTS }),
+      reviewCount: s.reviewCount,
+      onReviewCount: (e) => { const v = parseInt(e.target.value, 10); this.setState({ reviewCount: isNaN(v) ? 10 : Math.max(1, Math.min(100, v)) }); },
+      extractingUI: s.extractingUI, notExtractingUI: !s.extractingUI,
+      showUiProgress: s.extractingUI || s.uiDone,
+      uiPct: Math.round(Math.min(s.uiProgress, 100)) + '%',
+      uiBarStyle: { height:'100%', width: Math.min(s.uiProgress, 100) + '%', background:'var(--ai-accent-gradient)', borderRadius:'3px', transition:'width .12s linear' },
+      uiStageTitle: uiStageTitles[s.uiStage] || uiStageTitles[1],
+      uiStageDesc: uiStageDescs[s.uiStage] || uiStageDescs[1],
+      uiStages,
+      showUiScreens: s.uiStage >= 2,
+      showUiScoring: s.uiStage >= 3,
+      detectedScreens: this.DETECTED_SCREENS,
+      jiraScreens: this.JIRA_SCREENS.map(p => p[0] + ' · ' + p[1]),
+      candidateCount: '19,616',
+      extractUiStyle,
+      extractUiLabel: s.extractingUI ? 'Working…' : 'Extract and find matches',
+      extractUi: () => {
+        if (this.state.extractingUI) return;
+        this.setState({ extractingUI:true, uiProgress:0, uiStage:1, uiDone:false });
+        this._uiTimer = setInterval(() => {
+          this.setState(st => {
+            const p = st.uiProgress + 2.2;
+            if (p >= 100) {
+              clearInterval(this._uiTimer);
+              setTimeout(() => this.setState({ step:4 }), 700);
+              return { uiProgress:100, uiStage:3, extractingUI:false, uiDone:true };
+            }
+            return { uiProgress:p, uiStage: p < 40 ? 1 : p < 72 ? 2 : 3 };
+          });
+        }, 100);
+      },
+      skipUi: () => { if (this._uiTimer) clearInterval(this._uiTimer); this.setState({ extractingUI:false, step:4 }); },
       goStep1:()=>this.setState({step:1}), goStep2:()=>this.setState({step:2}),
-      goStep3:()=>this.setState({step:3}),
+      goStep3:()=>this.setState({step:3}), goStep4:()=>this.setState({step:4}),
       files:s.files, hasFiles:s.files.length>0,
       addFile: () => this.setState(st => {
         const names=[['login-screen.png','248 KB'],['error-state.png','196 KB'],['mfa-prompt.png','312 KB']];
@@ -735,9 +984,10 @@ class Component extends DCLogic {
       generate:()=>this.setState({ generated:true }),
       generateLabel: s.generated ? 'Regenerate test cases' : 'Generate test cases',
       services,
-      lastSynced:s.lastSynced, syncLabel: s.syncing?'Syncing…':'Sync now',
+      syncHeadline: s.lastSyncedAt ? 'Last synced ' + this.relTime(s.lastSyncedAt).toLowerCase() : 'Not synced yet',
+      syncLabel: s.syncing?'Syncing…':'Sync now',
       syncSpin: s.syncing ? 'rotate(180deg)' : 'none',
-      doSync: () => { if (s.syncing) return; this.setState({ syncing:true }); setTimeout(()=>this.setState({ syncing:false, lastSynced:'Just now' }), 1100); },
+      doSync: () => { if (s.syncing) return; this.setState({ syncing:true }); setTimeout(()=>this.setState({ syncing:false, lastSyncedAt: Date.now() }), 1100); },
     };
   }
 }
