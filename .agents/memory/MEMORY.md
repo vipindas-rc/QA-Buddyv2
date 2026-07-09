@@ -1,0 +1,1 @@
+- [Bundled design artifact editing](bundled-design-artifacts.md) — unpack/repack __bundler/template JSON with <\u002F escaping; check {{binding}} parity; screenshot via REPLIT_DEV_DOMAIN when :80 proxy down.

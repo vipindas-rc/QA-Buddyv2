@@ -1,0 +1,1540 @@
+UUID: fad43d71-64c3-4262-bbec-ebc516eb76ad
+/* @ds-bundle: {"format":3,"namespace":"SpringDesignSystem_019dd9","components":[],"sourceHashes":{"ui_kits/ringcentral-app/App.jsx":"f878e3e900d2","ui_kits/ringcentral-app/Atoms.jsx":"45a326fee152","ui_kits/ringcentral-app/Chrome.jsx":"52dc5e948f0f","ui_kits/ringcentral-app/Message.jsx":"535db536a3ed","ui_kits/ringcentral-app/MessageSurface.jsx":"3478519bd3e8","ui_kits/ringcentral-app/Phone.jsx":"6693b8a6b16d","ui_kits/ringcentral-app/Shell.jsx":"51ad15ffeae6","ui_kits/ringcentral-app/Video.jsx":"ef8d444e4146"},"inlinedExternals":[],"unexposedExports":[]} */
+
+(() => {
+
+const __ds_ns = (window.SpringDesignSystem_019dd9 = window.SpringDesignSystem_019dd9 || {});
+
+const __ds_scope = {};
+
+(__ds_ns.__errors = __ds_ns.__errors || []);
+
+// ui_kits/ringcentral-app/App.jsx
+try { (() => {
+/* global React, ReactDOM, TopBar, Rail, MessageList, ChatThread, PhoneList, DialPad, VideoLobby, VideoMeeting */
+const {
+  useState,
+  useMemo
+} = React;
+
+// ── Mock data ─────────────────────────────────────
+const CHATS = [{
+  id: 'c1',
+  name: 'Maria Chen',
+  presence: 'active',
+  preview: 'Pushed the new components — take a look',
+  time: '2 min',
+  unread: 2,
+  mentions: false,
+  subtitle: 'Active now'
+}, {
+  id: 'c2',
+  name: '#design-system',
+  presence: null,
+  preview: 'James: nailed the avatar stack 👏',
+  time: '12:34',
+  unread: 5,
+  mentions: true,
+  subtitle: '24 members'
+}, {
+  id: 'c3',
+  name: 'James Park',
+  presence: 'away',
+  preview: 'Sounds good — let me know when you re…',
+  time: '11:02',
+  unread: 0,
+  mentions: false
+}, {
+  id: 'c4',
+  name: '#engineering',
+  presence: null,
+  preview: 'Build is green again',
+  time: '10:48',
+  unread: 0,
+  mentions: false,
+  subtitle: '42 members'
+}, {
+  id: 'c5',
+  name: 'Aisha Singh',
+  presence: 'dnd',
+  preview: 'You: I\'ll review the spec tomorrow',
+  time: 'Yest',
+  unread: 0,
+  mentions: false
+}, {
+  id: 'c6',
+  name: 'Tomás Reyes',
+  presence: 'offline',
+  preview: 'Thanks!',
+  time: 'Yest',
+  unread: 0,
+  mentions: false
+}, {
+  id: 'c7',
+  name: '#announcements',
+  presence: null,
+  preview: 'New release notes for v4.12',
+  time: 'Mon',
+  unread: 0,
+  mentions: false,
+  subtitle: 'Company-wide'
+}, {
+  id: 'c8',
+  name: 'Rebecca Liu',
+  presence: 'active',
+  preview: 'Calendar invite sent',
+  time: 'Mon',
+  unread: 0,
+  mentions: false
+}];
+const SEED_MSGS = {
+  c1: [{
+    id: 1,
+    author: 'Maria Chen',
+    t: Date.now() - 1000 * 60 * 40,
+    time: '10:24 AM',
+    text: "Morning! Just pushed the latest avatar + presence components to the design system."
+  }, {
+    id: 2,
+    author: 'Maria Chen',
+    t: Date.now() - 1000 * 60 * 39,
+    time: '10:25 AM',
+    text: "Status dots use the semantic colors now — active green, away orange, DND red. Take a look when you can.",
+    reactions: [{
+      emoji: '👍',
+      count: 3,
+      mine: true
+    }, {
+      emoji: '🎉',
+      count: 1
+    }]
+  }, {
+    id: 3,
+    author: 'You',
+    t: Date.now() - 1000 * 60 * 5,
+    time: '11:00 AM',
+    text: "Looks great. The DND red felt a hair bright — should we use the high-contrast variant on the dot?"
+  }, {
+    id: 4,
+    author: 'Maria Chen',
+    t: Date.now() - 1000 * 60 * 2,
+    time: '11:03 AM',
+    text: "Good call. Pushing a fix now."
+  }],
+  c2: [{
+    id: 1,
+    author: 'James Park',
+    t: Date.now() - 1000 * 60 * 30,
+    time: '12:04 PM',
+    text: "Avatar stack is in. We support up to 5 visible + overflow count."
+  }, {
+    id: 2,
+    author: 'Aisha Singh',
+    t: Date.now() - 1000 * 60 * 29,
+    time: '12:05 PM',
+    text: "nailed it 👏",
+    reactions: [{
+      emoji: '👏',
+      count: 4,
+      mine: false
+    }]
+  }, {
+    id: 3,
+    author: 'James Park',
+    t: Date.now() - 1000 * 60 * 4,
+    time: '12:30 PM',
+    text: "@everyone heads-up: theme tokens have a small breaking change in the next minor — see the PR."
+  }]
+};
+const CALLS = [{
+  id: 1,
+  name: 'Maria Chen',
+  label: 'Mobile · (415) 555-0142',
+  when: '2 min',
+  dir: 'in'
+}, {
+  id: 2,
+  name: 'Aisha Singh',
+  label: '(212) 555-0193',
+  when: '14 min',
+  dir: 'missed'
+}, {
+  id: 3,
+  name: 'Acme Corp',
+  label: '(800) 555-0119',
+  when: '1 hr',
+  dir: 'out'
+}, {
+  id: 4,
+  name: 'James Park',
+  label: 'Mobile · (646) 555-0101',
+  when: 'Yest',
+  dir: 'out'
+}, {
+  id: 5,
+  name: 'Tomás Reyes',
+  label: '(310) 555-0166',
+  when: 'Yest',
+  dir: 'in'
+}, {
+  id: 6,
+  name: 'Voicemail',
+  label: '2 new messages',
+  when: 'Mon',
+  dir: 'in'
+}];
+const VIDEO_PEOPLE = [{
+  name: 'You',
+  muted: false,
+  off: false,
+  speaker: false
+}, {
+  name: 'Maria Chen',
+  muted: false,
+  off: false,
+  speaker: true
+}, {
+  name: 'James Park',
+  muted: true,
+  off: false,
+  speaker: false
+}, {
+  name: 'Aisha Singh',
+  muted: false,
+  off: true,
+  speaker: false
+}];
+
+// ── App ───────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState('message');
+  const [activeChat, setActiveChat] = useState('c1');
+  const [msgs, setMsgs] = useState(SEED_MSGS);
+  const [inMeeting, setInMeeting] = useState(false);
+  const [callTo, setCallTo] = useState(null);
+  const chat = CHATS.find(c => c.id === activeChat);
+  const send = text => {
+    const m = {
+      id: Date.now(),
+      author: 'You',
+      t: Date.now(),
+      time: 'Now',
+      text
+    };
+    setMsgs(prev => ({
+      ...prev,
+      [activeChat]: [...(prev[activeChat] || []), m]
+    }));
+  };
+  let surface;
+  if (tab === 'message') {
+    surface = /*#__PURE__*/React.createElement("div", {
+      className: "surface"
+    }, /*#__PURE__*/React.createElement(MessageList, {
+      chats: CHATS,
+      activeId: activeChat,
+      onSelect: setActiveChat
+    }), /*#__PURE__*/React.createElement(ChatThread, {
+      chat: chat,
+      messages: msgs[activeChat] || [],
+      onSend: send
+    }));
+  } else if (tab === 'phone') {
+    surface = /*#__PURE__*/React.createElement("div", {
+      className: "surface"
+    }, /*#__PURE__*/React.createElement(PhoneList, {
+      items: CALLS,
+      onCall: i => setCallTo(i)
+    }), /*#__PURE__*/React.createElement(DialPad, {
+      onPlace: n => alert(`Calling ${n}…`)
+    }));
+  } else if (tab === 'video') {
+    surface = inMeeting ? /*#__PURE__*/React.createElement(VideoMeeting, {
+      participants: VIDEO_PEOPLE,
+      onLeave: () => setInMeeting(false)
+    }) : /*#__PURE__*/React.createElement(VideoLobby, {
+      onStart: () => setInMeeting(true),
+      onJoin: () => setInMeeting(true)
+    });
+  } else {
+    surface = /*#__PURE__*/React.createElement("div", {
+      className: "surface"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "empty",
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "e-icon"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: `../../assets/icons/${tab[0].toUpperCase() + tab.slice(1)}.svg`,
+      onError: e => e.target.src = '../../assets/icons/Apps.svg'
+    })), /*#__PURE__*/React.createElement("h3", null, tab[0].toUpperCase() + tab.slice(1)), /*#__PURE__*/React.createElement("p", null, "This surface uses the same Spring shell \u2014 sidebar, header, list + detail. Try Message, Video, or Phone for the click-thru flows.")));
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement(TopBar, null), /*#__PURE__*/React.createElement(Rail, {
+    tab: tab,
+    setTab: setTab
+  }), surface);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/App.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Atoms.jsx
+try { (() => {
+// Shared utilities + atoms used across the kit
+const {
+  useState,
+  useRef,
+  useEffect
+} = React;
+const palette = ['#743DFF', '#0770C0', '#70BC06', '#C98700', '#219E37', '#C40C05', '#D3720E', '#147480', '#9B45A0'];
+function hashColor(seed) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = h * 31 + seed.charCodeAt(i) | 0;
+  return palette[Math.abs(h) % palette.length];
+}
+function initials(name) {
+  return name.split(' ').filter(Boolean).slice(0, 2).map(s => s[0].toUpperCase()).join('');
+}
+
+// ── Avatar ────────────────────────────────────────────────
+function Avatar({
+  name,
+  size = 40,
+  presence,
+  color
+}) {
+  const c = color || hashColor(name);
+  const fontSize = Math.max(11, Math.round(size * 0.36));
+  const dot = Math.max(8, Math.round(size * 0.28));
+  const presColor = {
+    online: '#16A937',
+    away: '#FF6600',
+    dnd: '#EA1A1A',
+    offline: '#9E9FA4'
+  }[presence];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: size,
+      height: size,
+      borderRadius: '9999px',
+      background: c,
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 600,
+      fontSize,
+      position: 'relative',
+      flexShrink: 0
+    }
+  }, initials(name), presColor && /*#__PURE__*/React.createElement("span", {
+    style: {
+      position: 'absolute',
+      bottom: -1,
+      right: -1,
+      width: dot,
+      height: dot,
+      borderRadius: '9999px',
+      background: presColor,
+      border: '2px solid #fff'
+    }
+  }));
+}
+
+// ── Icon (img helper) ─────────────────────────────────────
+function I({
+  name,
+  size = 22,
+  style,
+  alt = ''
+}) {
+  return /*#__PURE__*/React.createElement("img", {
+    src: `../../assets/icons/${name}.svg`,
+    width: size,
+    height: size,
+    alt: alt,
+    style: style
+  });
+}
+
+// ── Chat row ──────────────────────────────────────────────
+function ChatRow({
+  chat,
+  active,
+  onClick
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: `chat-row ${active ? 'active' : ''} ${chat.unread ? 'unread' : ''}`,
+    onClick: onClick
+  }, /*#__PURE__*/React.createElement(Avatar, {
+    name: chat.name,
+    size: 40,
+    presence: chat.presence,
+    color: chat.color
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "name"
+  }, chat.name), /*#__PURE__*/React.createElement("div", {
+    className: "preview"
+  }, chat.preview)), /*#__PURE__*/React.createElement("div", {
+    className: "meta"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "time"
+  }, chat.time), chat.unread > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "count"
+  }, chat.unread)));
+}
+
+// ── Empty state ───────────────────────────────────────────
+function EmptyState({
+  icon = 'Message',
+  title,
+  body,
+  action
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "e-icon"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: icon,
+    size: 32
+  })), /*#__PURE__*/React.createElement("h3", null, title), /*#__PURE__*/React.createElement("p", null, body), action);
+}
+window.Avatar = Avatar;
+window.I = I;
+window.ChatRow = ChatRow;
+window.EmptyState = EmptyState;
+window.hashColor = hashColor;
+window.initials = initials;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Atoms.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Chrome.jsx
+try { (() => {
+// Top bar + Left rail
+function TopBar({
+  unread,
+  onSearch
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/RingCentralLogo.svg",
+    alt: "RingCentral"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "search"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Search",
+    size: 18
+  }), /*#__PURE__*/React.createElement("input", {
+    placeholder: "Search messages, files, people\u2026",
+    onChange: e => onSearch?.(e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "right"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "What's new"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "AiStars",
+    size: 22
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Notifications"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Notifications",
+    size: 22
+  }), unread > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "count"
+  }, unread)), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Help"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Help",
+    size: 22
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Settings"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Settings",
+    size: 22
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "me",
+    title: "Maria Chen \u2014 Available"
+  }, "MC", /*#__PURE__*/React.createElement("span", {
+    className: "pres"
+  }))));
+}
+function LeftRail({
+  active,
+  onChange,
+  badges
+}) {
+  const tabs = [{
+    id: 'message',
+    label: 'Message',
+    icon: 'Message',
+    filled: 'MessageFilled'
+  }, {
+    id: 'video',
+    label: 'Video',
+    icon: 'PhoneVideo',
+    filled: 'PhoneVideo'
+  }, {
+    id: 'phone',
+    label: 'Phone',
+    icon: 'Call',
+    filled: 'CallFilled'
+  }, {
+    id: 'fax',
+    label: 'Fax',
+    icon: 'Fax',
+    filled: 'FaxFilled'
+  }, {
+    id: 'contacts',
+    label: 'Contacts',
+    icon: 'Contacts',
+    filled: 'ContactsFilled'
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "rail"
+  }, tabs.map(t => {
+    const isActive = t.id === active;
+    const badge = badges?.[t.id];
+    return /*#__PURE__*/React.createElement("button", {
+      key: t.id,
+      className: `tab ${isActive ? 'active' : ''}`,
+      onClick: () => onChange(t.id)
+    }, /*#__PURE__*/React.createElement(I, {
+      name: isActive ? t.filled : t.icon,
+      size: 24,
+      style: {
+        filter: isActive ? 'invert(20%) sepia(98%) saturate(2916%) hue-rotate(220deg) brightness(85%) contrast(110%)' : 'none'
+      }
+    }), /*#__PURE__*/React.createElement("span", null, t.label), badge > 0 && /*#__PURE__*/React.createElement("span", {
+      className: "pip"
+    }, badge));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "spacer"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "fab",
+    title: "New action"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Plus",
+    size: 22
+  })));
+}
+window.TopBar = TopBar;
+window.LeftRail = LeftRail;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Chrome.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Message.jsx
+try { (() => {
+/* global React, Avatar, Icon, colorFor, initial */
+const {
+  useState,
+  useMemo,
+  useRef,
+  useEffect
+} = React;
+function ChatRow({
+  chat,
+  active,
+  onClick
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: `chat-row ${active ? 'active' : ''} ${chat.unread ? 'unread' : ''}`,
+    onClick: onClick
+  }, /*#__PURE__*/React.createElement(Avatar, {
+    name: chat.name,
+    size: 40,
+    presence: chat.presence
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "name"
+  }, chat.name), /*#__PURE__*/React.createElement("div", {
+    className: "preview"
+  }, chat.preview)), /*#__PURE__*/React.createElement("div", {
+    className: "meta"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "time"
+  }, chat.time), chat.unread > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "count"
+  }, chat.unread)));
+}
+function MessageList({
+  chats,
+  activeId,
+  onSelect
+}) {
+  const [filter, setFilter] = useState('all');
+  const filtered = useMemo(() => {
+    if (filter === 'unread') return chats.filter(c => c.unread);
+    if (filter === 'mentions') return chats.filter(c => c.mentions);
+    return chats;
+  }, [chats, filter]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "list-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-title"
+  }, "Message"), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "Filter"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Filter.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "New conversation"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Compose.svg"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-tabs"
+  }, ['all', 'unread', 'mentions'].map(f => /*#__PURE__*/React.createElement("button", {
+    key: f,
+    className: `lc-tab ${filter === f ? 'active' : ''}`,
+    onClick: () => setFilter(f)
+  }, f[0].toUpperCase() + f.slice(1)))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-list"
+  }, filtered.map(c => /*#__PURE__*/React.createElement(ChatRow, {
+    key: c.id,
+    chat: c,
+    active: c.id === activeId,
+    onClick: () => onSelect(c.id)
+  }))));
+}
+function Composer({
+  onSend,
+  placeholder
+}) {
+  const [value, setValue] = useState('');
+  const taRef = useRef(null);
+  useEffect(() => {
+    if (!taRef.current) return;
+    taRef.current.style.height = 'auto';
+    taRef.current.style.height = Math.min(120, taRef.current.scrollHeight) + 'px';
+  }, [value]);
+  const submit = () => {
+    if (!value.trim()) return;
+    onSend(value.trim());
+    setValue('');
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "composer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "box"
+  }, /*#__PURE__*/React.createElement("textarea", {
+    ref: taRef,
+    value: value,
+    onChange: e => setValue(e.target.value),
+    placeholder: placeholder || 'Type a new message',
+    onKeyDown: e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submit();
+      }
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "row"
+  }, /*#__PURE__*/React.createElement("button", {
+    title: "Attach"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Attach.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Emoji"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Emoji.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Mention"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/AddPerson?.svg",
+    onError: e => e.target.src = '../../assets/icons/AddContact.svg'
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Smart Notes"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/AiStars.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: `send ${!value.trim() ? 'disabled' : ''}`,
+    title: "Send",
+    onClick: submit
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Send.svg"
+  })))));
+}
+function Message({
+  msg,
+  contiguous
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: `msg ${contiguous ? 'cont' : ''}`
+  }, /*#__PURE__*/React.createElement(Avatar, {
+    name: msg.author,
+    size: 36
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "body"
+  }, !contiguous && /*#__PURE__*/React.createElement("div", {
+    className: "head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "name"
+  }, msg.author), /*#__PURE__*/React.createElement("span", {
+    className: "when"
+  }, msg.time)), /*#__PURE__*/React.createElement("div", {
+    className: "text"
+  }, msg.text), msg.reactions && msg.reactions.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "reactions"
+  }, msg.reactions.map((r, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    className: `reaction ${r.mine ? 'mine' : ''}`
+  }, r.emoji, " ", r.count)))));
+}
+function ChatThread({
+  chat,
+  messages,
+  onSend
+}) {
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "thread-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "thread-header"
+  }, /*#__PURE__*/React.createElement(Avatar, {
+    name: chat.name,
+    size: 36,
+    presence: chat.presence
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ti"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "n"
+  }, chat.name), /*#__PURE__*/React.createElement("span", {
+    className: "s"
+  }, chat.subtitle || (chat.presence === 'active' ? 'Active now' : 'Offline'))), /*#__PURE__*/React.createElement("div", {
+    className: "actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    title: "Call"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Call.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Video"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/PhoneVideo.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Pin"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Bookmark.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "More"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Apps.svg"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "banner-ai"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/AiStars.svg"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "Smart Notes"), " \xB7 I'll summarize this thread when you ask. Try \"/summarize last 24 hours\".")), /*#__PURE__*/React.createElement("div", {
+    className: "thread-msgs",
+    ref: scrollRef
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "day-divider"
+  }, /*#__PURE__*/React.createElement("span", null, "Today")), messages.map((m, i) => {
+    const prev = messages[i - 1];
+    const cont = prev && prev.author === m.author && m.t - prev.t < 5 * 60 * 1000;
+    return /*#__PURE__*/React.createElement(Message, {
+      key: m.id,
+      msg: m,
+      contiguous: cont
+    });
+  })), /*#__PURE__*/React.createElement(Composer, {
+    onSend: onSend,
+    placeholder: `Message ${chat.name}`
+  }));
+}
+window.MessageList = MessageList;
+window.ChatThread = ChatThread;
+window.Composer = Composer;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Message.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/MessageSurface.jsx
+try { (() => {
+// Message surface — three-pane: ChatList + Thread
+function MessageSurface({
+  data,
+  setData
+}) {
+  const {
+    chats,
+    messagesByChat,
+    activeChatId
+  } = data;
+  const [draft, setDraft] = useState('');
+  const [filter, setFilter] = useState('all');
+  const activeChat = chats.find(c => c.id === activeChatId);
+  const messages = messagesByChat[activeChatId] || [];
+  const filtered = chats.filter(c => filter === 'unread' ? c.unread > 0 : true);
+  const send = () => {
+    if (!draft.trim()) return;
+    const m = {
+      id: 'm' + Date.now(),
+      author: 'Maria Chen',
+      authorColor: '#743DFF',
+      time: 'Just now',
+      text: draft.trim(),
+      me: true
+    };
+    setData(d => ({
+      ...d,
+      messagesByChat: {
+        ...d.messagesByChat,
+        [activeChatId]: [...(d.messagesByChat[activeChatId] || []), m]
+      },
+      chats: d.chats.map(c => c.id === activeChatId ? {
+        ...c,
+        preview: 'You: ' + m.text,
+        time: 'now',
+        unread: 0
+      } : c)
+    }));
+    setDraft('');
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "surface"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "list-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-title"
+  }, "Message"), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "Filter"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Filter",
+    size: 20
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "New conversation"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Compose",
+    size: 20
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-tabs"
+  }, [['all', 'All'], ['unread', 'Unread'], ['mentions', '@Mentions'], ['bookmarks', 'Bookmarks']].map(([k, l]) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    className: `lc-tab ${filter === k ? 'active' : ''}`,
+    onClick: () => setFilter(k)
+  }, l))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-list"
+  }, filtered.map(c => /*#__PURE__*/React.createElement(ChatRow, {
+    key: c.id,
+    chat: c,
+    active: c.id === activeChatId,
+    onClick: () => setData(d => ({
+      ...d,
+      activeChatId: c.id,
+      chats: d.chats.map(x => x.id === c.id ? {
+        ...x,
+        unread: 0
+      } : x)
+    }))
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "thread-col"
+  }, activeChat ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "thread-header"
+  }, /*#__PURE__*/React.createElement(Avatar, {
+    name: activeChat.name,
+    size: 36,
+    color: activeChat.color
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "ti"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "n"
+  }, activeChat.name), /*#__PURE__*/React.createElement("div", {
+    className: "s"
+  }, activeChat.subtitle || 'Direct message')), /*#__PURE__*/React.createElement("div", {
+    className: "actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    title: "Start a call"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Call",
+    size: 20
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Start a video call"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "PhoneVideo",
+    size: 20
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Add people"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "AddContact",
+    size: 20
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Pin"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Bookmark",
+    size: 20
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Settings"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Settings",
+    size: 20
+  })))), activeChat.aiBanner && /*#__PURE__*/React.createElement("div", {
+    className: "banner-ai"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "AiStarsFilled",
+    size: 18
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "Smart Notes \u2014 "), "Summary, action items and follow-ups will be ready right after the call.")), /*#__PURE__*/React.createElement("div", {
+    className: "thread-msgs"
+  }, messages.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "ChatDot",
+    title: "No messages yet",
+    body: "Send a message to start the conversation."
+  }) : groupMessages(messages).map((g, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, g.divider && /*#__PURE__*/React.createElement("div", {
+    className: "day-divider"
+  }, /*#__PURE__*/React.createElement("span", null, g.divider)), g.msgs.map((m, j) => /*#__PURE__*/React.createElement("div", {
+    key: m.id,
+    className: `msg ${j > 0 ? 'cont' : ''}`
+  }, j === 0 ? /*#__PURE__*/React.createElement(Avatar, {
+    name: m.author,
+    size: 36,
+    color: m.authorColor
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "av"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "body"
+  }, j === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "name"
+  }, m.author), /*#__PURE__*/React.createElement("span", {
+    className: "when"
+  }, m.time)), /*#__PURE__*/React.createElement("div", {
+    className: "text"
+  }, m.text), m.reactions && /*#__PURE__*/React.createElement("div", {
+    className: "reactions"
+  }, m.reactions.map((r, k) => /*#__PURE__*/React.createElement("span", {
+    key: k,
+    className: `reaction ${r.mine ? 'mine' : ''}`
+  }, r.emoji, " ", r.count))))))))), /*#__PURE__*/React.createElement("div", {
+    className: "composer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "box"
+  }, /*#__PURE__*/React.createElement("textarea", {
+    rows: 1,
+    value: draft,
+    placeholder: `Message ${activeChat.name}`,
+    onChange: e => setDraft(e.target.value),
+    onKeyDown: e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      }
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "row"
+  }, /*#__PURE__*/React.createElement("button", {
+    title: "Attach"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Attach"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Emoji"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Emoji"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "GIF"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "AiStars"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Mention"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "ChatDot"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: `send ${draft.trim() ? '' : 'disabled'}`,
+    onClick: send,
+    title: "Send"
+  }, /*#__PURE__*/React.createElement(I, {
+    name: "Send"
+  })))))) : /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "Message",
+    title: "No conversation selected",
+    body: "Pick a conversation from the list to keep talking."
+  })));
+}
+
+// Group messages by author (consecutive same-author folds into one block)
+function groupMessages(msgs) {
+  const out = [];
+  let cur = null;
+  let lastDay = null;
+  msgs.forEach(m => {
+    if (m.day && m.day !== lastDay) {
+      out.push({
+        divider: m.day,
+        msgs: []
+      });
+      lastDay = m.day;
+      cur = null;
+    }
+    if (out.length === 0) out.push({
+      msgs: []
+    });
+    const block = out[out.length - 1];
+    if (block.msgs.length === 0 || block.msgs[block.msgs.length - 1].author !== m.author) {
+      block.msgs.push(m);
+      cur = block;
+    } else {
+      block.msgs.push(m);
+    }
+  });
+  return out;
+}
+window.MessageSurface = MessageSurface;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/MessageSurface.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Phone.jsx
+try { (() => {
+/* global React, Avatar, Icon, initial, colorFor */
+const {
+  useState
+} = React;
+function PhoneList({
+  items,
+  onCall
+}) {
+  const [tab, setTab] = useState('all');
+  const filtered = items.filter(i => tab === 'all' ? true : tab === 'missed' ? i.dir === 'missed' : i.dir === 'out');
+  return /*#__PURE__*/React.createElement("div", {
+    className: "list-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-title"
+  }, "Phone"), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "Add"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/AddContact.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "lc-btn",
+    title: "More"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Apps.svg"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-tabs"
+  }, [['all', 'All'], ['missed', 'Missed'], ['out', 'Outgoing']].map(([k, l]) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    className: `lc-tab ${tab === k ? 'active' : ''}`,
+    onClick: () => setTab(k)
+  }, l))), /*#__PURE__*/React.createElement("div", {
+    className: "lc-list phone-list"
+  }, filtered.map(i => /*#__PURE__*/React.createElement("div", {
+    key: i.id,
+    className: "ph-row",
+    onClick: () => onCall && onCall(i)
+  }, /*#__PURE__*/React.createElement("img", {
+    className: `dir ${i.dir === 'missed' ? 'missed' : ''}`,
+    src: `../../assets/icons/${i.dir === 'in' ? 'CaretLeft' : i.dir === 'out' ? 'CaretRight' : 'CaretLeft'}.svg`,
+    alt: i.dir
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `name ${i.dir === 'missed' ? 'missed' : ''}`
+  }, i.name), /*#__PURE__*/React.createElement("div", {
+    className: "num"
+  }, i.label)), /*#__PURE__*/React.createElement("div", {
+    className: "when"
+  }, i.when)))));
+}
+const KEYS = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', ''], ['0', '+'], ['#', '']];
+function DialPad({
+  onPlace
+}) {
+  const [n, setN] = useState('');
+  return /*#__PURE__*/React.createElement("div", {
+    className: "thread-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "thread-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ti"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "n"
+  }, "Dial pad"), /*#__PURE__*/React.createElement("span", {
+    className: "s"
+  }, "Type a number or pick a contact"))), /*#__PURE__*/React.createElement("div", {
+    className: "dial"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "display"
+  }, n || /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#9E9FA4'
+    }
+  }, "Enter a number")), /*#__PURE__*/React.createElement("div", {
+    className: "pad"
+  }, KEYS.map(([d, l]) => /*#__PURE__*/React.createElement("button", {
+    key: d,
+    className: "key",
+    onClick: () => setN(s => s + d)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "d"
+  }, d), /*#__PURE__*/React.createElement("span", {
+    className: "l"
+  }, l)))), /*#__PURE__*/React.createElement("div", {
+    className: "actions"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 48
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "call",
+    onClick: () => n && onPlace && onPlace(n),
+    title: "Call"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Call.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "back",
+    onClick: () => setN(s => s.slice(0, -1)),
+    title: "Backspace"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Backspace.svg"
+  })))));
+}
+window.PhoneList = PhoneList;
+window.DialPad = DialPad;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Phone.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Shell.jsx
+try { (() => {
+/* global React */
+const {
+  useState,
+  useMemo
+} = React;
+const PALETTE = ['#743DFF', '#0770C0', '#70BC06', '#C98700', '#219E37', '#C40C05', '#D3720E', '#147480', '#9B45A0'];
+const initial = n => n.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+const colorFor = n => {
+  let h = 0;
+  for (let i = 0; i < n.length; i++) h = h * 31 + n.charCodeAt(i) >>> 0;
+  return PALETTE[h % PALETTE.length];
+};
+function Avatar({
+  name,
+  size = 40,
+  presence
+}) {
+  const presColor = {
+    active: '#16A937',
+    away: '#FF6600',
+    dnd: '#EA1A1A',
+    offline: '#9E9FA4'
+  }[presence];
+  const dotSize = Math.max(8, Math.round(size * 0.28));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "av",
+    style: {
+      width: size,
+      height: size,
+      background: colorFor(name),
+      fontSize: Math.round(size * 0.36)
+    }
+  }, initial(name), presColor && /*#__PURE__*/React.createElement("span", {
+    className: "pres",
+    style: {
+      width: dotSize,
+      height: dotSize,
+      background: presColor
+    }
+  }));
+}
+function Icon({
+  name,
+  size = 24,
+  style
+}) {
+  return /*#__PURE__*/React.createElement("img", {
+    src: `../../assets/icons/${name}.svg`,
+    width: size,
+    height: size,
+    alt: "",
+    style: style
+  });
+}
+function TopBar({
+  unread = 4,
+  name = 'Maria Chen'
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "topbar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/RingCentralLogo.svg",
+    alt: "RingCentral"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "search"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Search.svg",
+    alt: ""
+  }), /*#__PURE__*/React.createElement("input", {
+    placeholder: "Search messages, files, people, settings\u2026"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "right"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "New action"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Plus.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Notifications"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Notifications.svg"
+  }), unread > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "count"
+  }, unread)), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Help"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Help.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "iconbtn",
+    title: "Settings"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Settings.svg"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "me",
+    title: name
+  }, initial(name), /*#__PURE__*/React.createElement("span", {
+    className: "pres"
+  }))));
+}
+function Rail({
+  tab,
+  setTab
+}) {
+  const tabs = [{
+    id: 'message',
+    label: 'Message',
+    icon: 'Message',
+    filled: 'MessageFilled',
+    count: 3
+  }, {
+    id: 'video',
+    label: 'Video',
+    icon: 'PhoneVideo',
+    filled: 'PhoneVideo'
+  }, {
+    id: 'phone',
+    label: 'Phone',
+    icon: 'Call',
+    filled: 'CallFilled',
+    count: 1
+  }, {
+    id: 'fax',
+    label: 'Fax',
+    icon: 'Fax',
+    filled: 'FaxFilled'
+  }, {
+    id: 'contacts',
+    label: 'Contacts',
+    icon: 'Contacts',
+    filled: 'ContactsFilled'
+  }, {
+    id: 'settings',
+    label: 'Settings',
+    icon: 'Settings',
+    filled: 'SettingsFilled'
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "rail"
+  }, tabs.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: `tab ${tab === t.id ? 'active' : ''}`,
+    onClick: () => setTab(t.id)
+  }, /*#__PURE__*/React.createElement("img", {
+    src: `../../assets/icons/${tab === t.id ? t.filled : t.icon}.svg`,
+    alt: "",
+    style: {
+      filter: tab === t.id ? 'invert(15%) sepia(99%) saturate(7373%) hue-rotate(232deg) brightness(78%) contrast(120%)' : 'none'
+    }
+  }), /*#__PURE__*/React.createElement("span", null, t.label), t.count > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "pip"
+  }, t.count))), /*#__PURE__*/React.createElement("div", {
+    className: "spacer"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "fab",
+    title: "Compose"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Compose.svg",
+    alt: "Compose"
+  })));
+}
+window.Avatar = Avatar;
+window.Icon = Icon;
+window.TopBar = TopBar;
+window.Rail = Rail;
+window.colorFor = colorFor;
+window.initial = initial;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Shell.jsx", error: String((e && e.message) || e) }); }
+
+// ui_kits/ringcentral-app/Video.jsx
+try { (() => {
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+/* global React, Avatar, initial, colorFor */
+const {
+  useState
+} = React;
+function VideoTile({
+  name,
+  you,
+  speaker,
+  muted,
+  off
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: `video-tile ${you ? 'you' : ''} ${speaker ? 'speaker' : ''}`
+  }, off ? /*#__PURE__*/React.createElement("div", {
+    className: "ph",
+    style: {
+      background: colorFor(name)
+    }
+  }, initial(name)) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      inset: 0,
+      background: `linear-gradient(135deg, ${colorFor(name)} 0%, rgba(0,0,0,0.6) 100%)`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ph",
+    style: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%,-50%)',
+      background: 'rgba(255,255,255,.15)',
+      color: '#fff'
+    }
+  }, initial(name))), /*#__PURE__*/React.createElement("div", {
+    className: "name"
+  }, muted && /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/MicrophoneOff.svg"
+  }), name));
+}
+function VideoMeeting({
+  participants = [],
+  onLeave
+}) {
+  const [mic, setMic] = useState(true);
+  const [vid, setVid] = useState(true);
+  const [hand, setHand] = useState(false);
+  const ctl = (label, on, onClick, icon, iconOff, danger) => /*#__PURE__*/React.createElement("div", {
+    className: "vc-stack"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: `vc ${on ? 'on' : ''} ${danger ? 'danger' : ''}`,
+    onClick: onClick
+  }, /*#__PURE__*/React.createElement("img", {
+    src: `../../assets/icons/${on ? icon : iconOff || icon}.svg`
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "vc-label"
+  }, label));
+  return /*#__PURE__*/React.createElement("div", {
+    className: "surface",
+    style: {
+      flexDirection: 'column'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "thread-header",
+    style: {
+      background: '#fff'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ti"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "n"
+  }, "Project launch sync"), /*#__PURE__*/React.createElement("span", {
+    className: "s"
+  }, participants.length, " participants \xB7 00:14:32")), /*#__PURE__*/React.createElement("div", {
+    className: "actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    title: "Smart Notes"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/SmartNotes.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Whiteboard"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Whiteboard.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Participants"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Users.svg"
+  })), /*#__PURE__*/React.createElement("button", {
+    title: "Chat"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/ChatDot.svg"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "video-stage"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: `video-grid g4`
+  }, participants.slice(0, 4).map((p, i) => /*#__PURE__*/React.createElement(VideoTile, _extends({
+    key: p.name
+  }, p, {
+    you: i === 0,
+    muted: i === 0 ? !mic : p.muted,
+    off: i === 0 ? !vid : p.off
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "video-controls"
+  }, ctl('Mic', mic, () => setMic(v => !v), 'Microphone', 'MicrophoneOff'), ctl('Video', vid, () => setVid(v => !v), 'PhoneVideo', 'PhoneVideo'), ctl('Share', false, () => {}, 'Share', 'Share'), ctl('Hand', hand, () => setHand(v => !v), 'Hand', 'Hand'), ctl('Record', false, () => {}, 'Record', 'Record'), /*#__PURE__*/React.createElement("div", {
+    className: "vc-stack"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "vc danger",
+    onClick: onLeave,
+    title: "Leave"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/PhoneWarning.svg"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "vc-label"
+  }, "Leave")))));
+}
+function VideoLobby({
+  onStart,
+  onJoin
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "surface"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "list-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lc-title"
+  }, "Video")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '8px 16px'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onStart,
+    style: {
+      width: '100%',
+      padding: '12px 16px',
+      border: 'none',
+      cursor: 'pointer',
+      background: '#0040DD',
+      color: '#fff',
+      borderRadius: 14,
+      font: '500 14px Inter',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      justifyContent: 'center',
+      boxShadow: '0 2px 4px 0 rgba(0,64,221,0.2)'
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/PhoneVideo.svg",
+    style: {
+      filter: 'brightness(0) invert(1)',
+      width: 20,
+      height: 20
+    }
+  }), "Start meeting"), /*#__PURE__*/React.createElement("button", {
+    onClick: onJoin,
+    style: {
+      marginTop: 8,
+      width: '100%',
+      padding: '11px 16px',
+      cursor: 'pointer',
+      background: '#fff',
+      color: '#323439',
+      borderRadius: 14,
+      font: '500 14px Inter',
+      border: '1.35px solid #DDDFE5'
+    }
+  }, "Join with code")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '4px 16px 0'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      font: '500 12px Inter',
+      color: '#72757A',
+      textTransform: 'uppercase',
+      letterSpacing: .4,
+      padding: '12px 0 6px'
+    }
+  }, "Upcoming")), /*#__PURE__*/React.createElement("div", {
+    className: "lc-list"
+  }, [{
+    t: 'Project launch sync',
+    when: 'In 12 min',
+    host: 'Maria Chen'
+  }, {
+    t: 'Design crit',
+    when: 'Today 4:00 PM',
+    host: 'Maria Chen'
+  }, {
+    t: 'Customer call · Acme',
+    when: 'Tomorrow 10:30 AM',
+    host: 'James Park'
+  }].map((m, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "ph-row",
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'auto 1fr auto',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      background: 'rgba(0,64,221,.1)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/Calendar.svg",
+    style: {
+      width: 18,
+      height: 18,
+      opacity: .8
+    }
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "name"
+  }, m.t), /*#__PURE__*/React.createElement("div", {
+    className: "num"
+  }, m.host)), /*#__PURE__*/React.createElement("div", {
+    className: "when"
+  }, m.when))))), /*#__PURE__*/React.createElement("div", {
+    className: "thread-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "e-icon"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "../../assets/icons/PhoneVideo.svg"
+  })), /*#__PURE__*/React.createElement("h3", null, "Ready when you are"), /*#__PURE__*/React.createElement("p", null, "Start an instant meeting, or pick one of your upcoming events on the left."))));
+}
+window.VideoMeeting = VideoMeeting;
+window.VideoLobby = VideoLobby;
+})(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/ringcentral-app/Video.jsx", error: String((e && e.message) || e) }); }
+
+})();
+
