@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Pasted debug screenshots / conversation assets (not app code)
+attached_assets/
