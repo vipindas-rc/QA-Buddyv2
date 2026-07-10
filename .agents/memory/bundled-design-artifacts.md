@@ -19,3 +19,11 @@ Also: if `screenshot type=app_preview` gets ERR_CONNECTION_REFUSED (shared proxy
 To verify interaction-gated UI (modals, hidden states): temporarily flip the default state flag (e.g. `modalOpen: true`), repack, screenshot, then revert and repack — the screenshot tool cannot click.
 
 The prototype can call the real API server: fetch('/api/...') works through the shared :80 proxy (design artifact at `/`, api at `/api`).
+
+Nested `sc-for` loops (up to 3 levels, e.g. rows → steps → styled text segments) render correctly — safe to use for rich text via segment arrays instead of innerHTML.
+
+The initial view is driven by the `state` defaults object in the template (e.g. `step`, `extracted`, `generated`, `uiDone`); to "land" the prototype on a specific wizard step for review, set those defaults directly (they are the real committed start state, not a temporary toggle). The bundler splash lives in `index.html` (`#__bundler_thumbnail`), NOT in the template JSON — edit it there; repack only rewrites the template `<script>` and preserves the rest of index.html.
+
+The template is rendered via innerHTML, so `<script>` tags inside the template DO NOT execute. For runtime DOM behavior (scroll listeners, IntersectionObserver, etc.) add a plain `<script>` to `index.html` before `</body>` — repack preserves it. Make such scripts re-query elements by id each tick (a cheap `setInterval` + scroll/resize listeners) so they survive the framework's re-renders (which replace DOM nodes and would drop any observer bound to a specific node). Example use: toggling a "stuck" class on a `position:sticky; bottom:0` bar by comparing `getBoundingClientRect().bottom` to `innerHeight` (square corners while floating over content, rounded when resting at the scroll bottom).
+
+Only `--neutral-b0..b5` are defined in `:root` — there is NO `--neutral-b6`; referencing it makes the property resolve to nothing (e.g. a transparent background). Use `--neutral-b5` (rgb 245,246,249) for a very light grey surface.

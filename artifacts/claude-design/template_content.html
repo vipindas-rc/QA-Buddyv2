@@ -207,6 +207,8 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
   .tcg-drop:hover { border-color: var(--primary-f) !important; background: var(--primary-t10) !important; }
   @keyframes tcg-spin { to { transform: rotate(360deg); } }
   a { color: var(--link); }
+  #tcg-actbar { border-radius: var(--radius-md); transition: border-radius var(--duration-fast) var(--easing-fast-in); }
+  #tcg-actbar.is-stuck { border-radius: 0; }
 </style>
 </helmet>
 
@@ -541,35 +543,360 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
           </div>
           </sc-if>
 
-          <!-- STEP 4 — review / generate -->
+          <!-- STEP 4 — review existing / generate new -->
           <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ true }}">
           <div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-              <sc-for list="{{ summary }}" as="row" hint-placeholder-count="4">
-                <div style="padding:14px 16px; background:var(--neutral-b5); border-radius:var(--radius-sm);">
-                  <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.2px; color:var(--neutral-b3);">{{ row.label }}</div>
-                  <div style="font-size:14px; font-weight:600; color:var(--neutral-b1); margin-top:4px;">{{ row.value }}</div>
-                </div>
-              </sc-for>
-            </div>
-
-            <sc-if value="{{ generated }}" hint-placeholder-val="{{ true }}">
-            <div style="padding:16px; border:1px solid var(--success); background:var(--success-t10); border-radius:var(--radius-sm); display:flex; align-items:center; gap:12px;">
-              <svg viewBox="0 0 32 32" fill="var(--success-f)" style="width:22px;height:22px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
-              <div>
-                <div style="font-size:14px; font-weight:600; color:var(--neutral-b1);">Generated {{ genCount }} test cases</div>
-                <div style="font-size:13px; color:var(--neutral-b2);">Review and edit below, then push to Jira when ready.</div>
-              </div>
+            <!-- Tab strip: appears after first generation -->
+            <sc-if value="{{ showTabStrip }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; gap:6px; background:var(--neutral-b5); padding:5px; border-radius:var(--radius-md); margin-bottom:16px; width:max-content; max-width:100%;">
+              <button onclick="{{ tabExOnClick }}" class="tcg-tab {{ tabExClass }}" style="border:0; background:transparent; padding:9px 16px; border-radius:10px; font-size:13.5px; font-weight:600; color:{{ tabExColor }}; cursor:pointer; white-space:nowrap;">Existing Testcases</button>
+              <button onclick="{{ tabNewOnClick }}" class="tcg-tab {{ tabNewClass }}" style="border:0; background:transparent; padding:9px 16px; border-radius:10px; font-size:13.5px; font-weight:600; color:{{ tabNewColor }}; cursor:pointer; white-space:nowrap;">Generated New Testcases</button>
             </div>
             </sc-if>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px;">
-              <button onclick="{{ goStep3 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
-              <button onclick="{{ generate }}" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 22px; border:0; border-radius:var(--radius-md); background:var(--ai-accent-gradient); color:#fff; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow-xs-ai);">
-                <svg viewBox="0 0 32 32" fill="#fff" style="width:18px;height:18px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.949-0.304 1.614-1.202 1.614-2.213 0-1.011-0.665-1.909-1.614-2.213z"></path></svg>
-                {{ generateLabel }}
-              </button>
+            <!-- Update specific testcases (existing cases only) -->
+            <sc-if value="{{ showExisting }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 18px; margin-bottom:20px;">
+              <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--neutral-b1); margin-bottom:10px;">Update specific testcases</div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input value="{{ updIds }}" onchange="{{ onUpdIds }}" placeholder="CCI-25888, CCI-4858" class="tcg-field" style="flex:1; min-width:0; box-sizing:border-box; height:42px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
+                <button onclick="{{ updSpecific }}" class="tcg-btn-primary" style="height:42px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-xs-primary); flex:none;">Update</button>
+              </div>
+              <div style="font-size:12px; color:var(--neutral-b2); margin-top:8px;">Uses the Jira story and UI context already extracted in this run.</div>
+              <sc-if value="{{ updMsgShow }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f); margin-top:8px;">
+                <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
+                {{ updMsg }}
+              </div>
+              </sc-if>
             </div>
+            </sc-if>
+
+            <!-- EXISTING TESTCASES panel -->
+            <sc-if value="{{ showExisting }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:#fff;">
+                <span style="font-size:14px; font-weight:700; color:var(--neutral-b1);">Existing Testcases</span>
+                <span style="font-size:12px; font-weight:700; color:var(--primary-f-high-contrast); background:var(--primary-t10); padding:4px 10px; border-radius:var(--radius-xs); white-space:nowrap;">{{ matchedBadge }}</span>
+              </div>
+              <sc-if value="{{ existingOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; border-top:1px solid var(--border); align-items:stretch;">
+                <!-- Left: searchable list -->
+                <div style="width:252px; flex:none; border-right:1px solid var(--border); display:flex; flex-direction:column;">
+                  <div style="padding:12px 12px 8px;">
+                    <input value="{{ tcSearch }}" onchange="{{ onTcSearch }}" placeholder="Search testcases..." class="tcg-field" style="width:100%; box-sizing:border-box; height:38px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
+                    <div style="font-size:11px; font-weight:700; letter-spacing:.3px; color:var(--neutral-b2); margin-top:10px;">{{ tcCount }} TESTCASE(S)</div>
+                  </div>
+                  <div style="max-height:560px; overflow-y:auto;">
+                    <sc-for list="{{ tcList }}" as="tc" hint-placeholder-count="6">
+                      <div onclick="{{ tc.onClick }}" style="{{ tc.rowStyle }}">
+                        <div style="font-size:13px; font-weight:700; color:var(--primary-f); margin-bottom:2px;">{{ tc.id }}</div>
+                        <div style="font-size:13px; font-weight:600; color:var(--neutral-b1); line-height:18px;">{{ tc.title }}</div>
+                        <div style="font-size:12px; color:var(--neutral-b2); margin-top:4px;">{{ tc.meta }}</div>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ showMore }}" hint-placeholder-val="{{ true }}">
+                    <button onclick="{{ loadMore }}" title="Show more testcases" style="width:100%; border:0; border-top:1px solid var(--neutral-b5); background:#fff; padding:12px 0; font-size:18px; font-weight:700; color:var(--neutral-b1); cursor:pointer;">+</button>
+                    </sc-if>
+                  </div>
+                </div>
+                <!-- Main: detail pane -->
+                <div id="tcg-ex-detail" style="flex:1; min-width:0; padding:20px 24px 28px; max-height:640px; overflow-y:auto;">
+                  <div style="display:flex; gap:10px; align-items:baseline;">
+                    <span style="font-size:15px; font-weight:700; color:var(--primary-f); flex:none;">{{ exId }}</span>
+                    <h3 style="font-size:16px; line-height:23px; font-weight:700; color:var(--neutral-b0); margin:0; letter-spacing:0;">{{ exTitle }}</h3>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; margin:14px 0 16px; flex-wrap:wrap;">
+                    <span style="width:26px; height:26px; border:1px solid var(--border); border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--neutral-b1); flex:none;">{{ exPr }}</span>
+                    <span style="font-size:13px; color:var(--neutral-b2); white-space:nowrap;">{{ exCaseNav }}</span>
+                    <span style="display:inline-flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; flex:none;">
+                      <button onclick="{{ viewOriginal }}" style="{{ origBtnStyle }}">Original</button>
+                      <button onclick="{{ viewUpdated }}" style="{{ updBtnStyle }}">Updated</button>
+                    </span>
+                    <sc-if value="{{ showUpdateBtn }}" hint-placeholder-val="{{ true }}"><button onclick="{{ updateCase }}" class="tcg-btn-primary" style="height:38px; padding:0 16px; border:0; border-radius:var(--radius-sm); background:var(--primary-b); color:#fff; font-size:13px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-xs-primary); flex:none;">Update testcase</button></sc-if>
+                  </div>
+                  <sc-if value="{{ showUpdatedBand }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--success-t10); border:1px solid var(--success); border-radius:var(--radius-xs); margin-bottom:14px; font-size:13px; font-weight:600; color:var(--success-f);">
+                    <svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
+                    Updated draft generated from {{ storyKey }} and the extracted UI context.
+                  </div>
+                  </sc-if>
+                  <!-- SUMMARY -->
+                  <div id="tcg-ex-summary" style="margin-bottom:14px;">
+                    <button onclick="{{ toggleSecSummary }}" style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); border:0; padding:9px 12px; border-radius:var(--radius-xs); cursor:pointer; text-align:left;">
+                      <span style="color:var(--primary-f); font-size:9px; display:inline-block; transform:{{ secSummaryChevron }};">&#9660;</span>
+                      <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">SUMMARY</span>
+                    </button>
+                    <sc-if value="{{ secSummaryOpen }}" hint-placeholder-val="{{ true }}">
+                    <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                      <div style="font-size:13.5px; line-height:21px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Goal:</span> {{ exGoal }}</div>
+                      <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">User Story:</span> <span style="color:var(--primary-f); font-weight:700; text-decoration:underline; cursor:pointer;">{{ exStory }}</span></div>
+                      <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Component:</span> {{ exComponent }}</div>
+                    </div>
+                    </sc-if>
+                  </div>
+                  <!-- PRECONDITIONS -->
+                  <div id="tcg-ex-pre" style="margin-bottom:14px;">
+                    <button onclick="{{ toggleSecPre }}" style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); border:0; padding:9px 12px; border-radius:var(--radius-xs); cursor:pointer; text-align:left;">
+                      <span style="color:var(--primary-f); font-size:9px; display:inline-block; transform:{{ secPreChevron }};">&#9660;</span>
+                      <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">PRECONDITIONS</span>
+                    </button>
+                    <sc-if value="{{ secPreOpen }}" hint-placeholder-val="{{ true }}">
+                    <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                      <sc-for list="{{ exPre }}" as="pl" hint-placeholder-count="4">
+                        <div style="{{ pl.lineStyle }}">
+                          <sc-for list="{{ pl.segs }}" as="seg" hint-placeholder-count="3"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for>
+                        </div>
+                      </sc-for>
+                    </div>
+                    </sc-if>
+                  </div>
+                  <!-- TEST STEPS -->
+                  <div id="tcg-ex-steps" style="margin-bottom:14px;">
+                    <button onclick="{{ toggleSecSteps }}" style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); border:0; padding:9px 12px; border-radius:var(--radius-xs); cursor:pointer; text-align:left;">
+                      <span style="color:var(--primary-f); font-size:9px; display:inline-block; transform:{{ secStepsChevron }};">&#9660;</span>
+                      <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">TEST STEPS</span>
+                    </button>
+                    <sc-if value="{{ secStepsOpen }}" hint-placeholder-val="{{ true }}">
+                    <div style="border:1px solid var(--border); border-radius:var(--radius-xs); margin-top:8px; overflow:hidden;">
+                      <div style="display:grid; grid-template-columns:44px 1fr 1fr; background:var(--neutral-b5); padding:8px 14px; gap:14px;">
+                        <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">#</span>
+                        <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">STEP</span>
+                        <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">EXPECTED RESULT</span>
+                      </div>
+                      <sc-for list="{{ exSteps }}" as="st" hint-placeholder-count="5">
+                        <div style="{{ st.rowStyle }}">
+                          <span style="font-size:13px; font-weight:700; color:var(--neutral-b1);">{{ st.n }}</span>
+                          <span style="font-size:13px; line-height:19px; color:var(--neutral-b0);"><sc-for list="{{ st.stepSegs }}" as="seg" hint-placeholder-count="2"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for></span>
+                          <span style="font-size:13px; line-height:19px; color:var(--neutral-b0);"><sc-for list="{{ st.expSegs }}" as="seg" hint-placeholder-count="2"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for></span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    </sc-if>
+                  </div>
+                  <!-- CUSTOM FIELDS -->
+                  <div id="tcg-ex-custom">
+                    <div style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); padding:9px 12px; border-radius:var(--radius-xs); box-sizing:border-box;">
+                      <span style="color:var(--primary-f); font-size:9px;">&#9660;</span>
+                      <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">CUSTOM FIELDS</span>
+                    </div>
+                    <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                      <div style="font-size:13.5px; line-height:21px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Automation status:</span> {{ exAutomation }}</div>
+                      <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Test layer:</span> E2E</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Right rail anchor nav -->
+                <div style="width:104px; flex:none; border-left:1px solid var(--border); padding:10px 8px; display:flex; flex-direction:column; gap:8px; background:#fff;">
+                  <sc-for list="{{ exAnchors }}" as="an" hint-placeholder-count="4">
+                    <button onclick="{{ an.onClick }}" style="{{ an.style }}">
+                      <span style="font-size:15px; line-height:1;">{{ an.icon }}</span>
+                      <span style="font-size:11px; font-weight:600; line-height:13px;">{{ an.label }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
+            <!-- GENERATED NEW TESTCASES panel -->
+            <sc-if value="{{ showNew }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:#fff;">
+                <span style="font-size:14px; font-weight:700; color:var(--neutral-b1);">Generated New Testcases</span>
+                <div style="display:flex; align-items:center; gap:12px; flex:none;">
+                  <button onclick="{{ refineDrafts }}" title="{{ refineTitle }}" style="display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 16px; border:0; border-radius:var(--radius-full); background:linear-gradient(135deg, #1a237e 0%, #4527a0 100%); color:#fff; font-size:13px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-xs); opacity:{{ refineOpacity }};">
+                    <svg viewBox="0 0 32 32" fill="#fff" style="width:14px;height:14px;"><path d="M22.8 14.524c-2.563-0.727-4.518-2.703-5.26-5.272l-0.978-3.413c-0.286-0.98-1.197-1.673-2.225-1.673s-1.939 0.693-2.225 1.673l-0.978 3.396c-0.725 2.568-2.697 4.528-5.26 5.272l-3.389 0.963c-0.995 0.287-1.686 1.2-1.686 2.23s0.691 1.943 1.669 2.23l3.389 0.98c2.563 0.726 4.518 2.703 5.26 5.272l0.978 3.396c0.287 0.98 1.163 1.622 2.225 1.622s1.939-0.659 2.225-1.622l0.978-3.396c0.725-2.568 2.697-4.528 5.26-5.272l3.388-0.963c0.949-0.304 1.614-1.202 1.614-2.213 0-1.011-0.665-1.909-1.614-2.213z"></path></svg>
+                    {{ refineLabel }}
+                  </button>
+                  <span style="font-size:12px; font-weight:700; color:var(--primary-f-high-contrast); background:var(--primary-t10); padding:4px 10px; border-radius:var(--radius-xs); white-space:nowrap;">{{ draftsBadge }}</span>
+                </div>
+              </div>
+              <sc-if value="{{ genOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="border-top:1px solid var(--border);">
+                <!-- Intro + toolbar -->
+                <div style="padding:16px 18px 16px;">
+                  <div style="margin-bottom:14px;">
+                    <div style="font-size:15px; font-weight:700; color:var(--neutral-b0);">Generated New Testcases</div>
+                    <div style="font-size:13px; color:var(--neutral-b1); margin-top:4px;">{{ draftIntro }}</div>
+                  </div>
+                  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end;">
+                    <div style="width:200px;">
+                      <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">TestIT project</label>
+                      <select onchange="{{ onTitProject }}" class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 10px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:{{ titProjectColor }}; outline:none; background:#fff; cursor:pointer;">
+                        <option value="">Select TestIT project</option>
+                        <option value="RingCX Agent">RingCX Agent</option>
+                        <option value="CX Supervisor">CX Supervisor</option>
+                        <option value="EAG Web">EAG Web</option>
+                      </select>
+                    </div>
+                    <div style="width:180px;">
+                      <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">Suite</label>
+                      <sc-if value="{{ suiteEnabled }}" hint-placeholder-val="{{ true }}">
+                      <select onchange="{{ onSuite }}" class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 10px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:var(--neutral-b0); outline:none; background:#fff; cursor:pointer;">
+                        <option value="">Select suite</option>
+                        <option value="Regression">Regression</option>
+                        <option value="Smoke">Smoke</option>
+                        <option value="Supervisor observability">Supervisor observability</option>
+                      </select>
+                      </sc-if>
+                      <sc-if value="{{ suiteDisabled }}" hint-placeholder-val="{{ true }}">
+                      <div style="width:100%; box-sizing:border-box; height:40px; padding:0 10px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:var(--neutral-b3); background:var(--neutral-b5); display:flex; align-items:center;">Select project first</div>
+                      </sc-if>
+                    </div>
+                    <div style="flex:1; min-width:260px;">
+                      <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">Confluence page URL</label>
+                      <input value="{{ confUrl }}" onchange="{{ onConfUrl }}" placeholder="https://wiki.ringcentral.com/spaces/.../pages/..." class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none;">
+                    </div>
+                    <button onclick="{{ uploadConfluence }}" class="tcg-btn-ghost" style="height:40px; padding:0 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:#fff; color:var(--neutral-b1); font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; flex:none;">Upload to Confluence</button>
+                  </div>
+                  <sc-if value="{{ suiteDisabled }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:11px; font-weight:600; color:var(--primary-f); margin-top:8px;">Select a TestIT project to load suites.</div>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ genMsgShow }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f); padding:0 18px 12px;">
+                  <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
+                  {{ genMsg }}
+                </div>
+                </sc-if>
+                <div style="display:flex; border-top:1px solid var(--border); align-items:stretch;">
+                  <!-- Left: drafts list -->
+                  <div style="width:252px; flex:none; border-right:1px solid var(--border); display:flex; flex-direction:column;">
+                    <div style="padding:12px 12px 8px;">
+                      <input value="{{ drSearch }}" onchange="{{ onDrSearch }}" placeholder="Search generated testcases..." class="tcg-field" style="width:100%; box-sizing:border-box; height:38px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none;">
+                      <label style="display:flex; align-items:center; gap:8px; margin-top:10px; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer;">
+                        <input type="checkbox" checked="{{ allDraftsChecked }}" onchange="{{ toggleAllDrafts }}" style="width:15px; height:15px; accent-color:var(--primary-b); cursor:pointer;">
+                        <span style="font-size:13px; font-weight:600; color:var(--neutral-b1);">Select all</span>
+                      </label>
+                      <div style="font-size:11px; font-weight:700; letter-spacing:.3px; color:var(--neutral-b2); margin-top:10px;">{{ drCount }} GENERATED TESTCASE(S)</div>
+                    </div>
+                    <div style="max-height:520px; overflow-y:auto;">
+                      <sc-for list="{{ drList }}" as="dr" hint-placeholder-count="3">
+                        <div onclick="{{ dr.onClick }}" style="{{ dr.rowStyle }}">
+                          <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                            <input type="checkbox" checked="{{ dr.checked }}" onchange="{{ dr.onCheck }}" onclick="{{ dr.stopClick }}" style="width:15px; height:15px; accent-color:var(--primary-b); cursor:pointer; flex:none;">
+                            <span style="font-size:13px; font-weight:700; color:var(--primary-f);">{{ dr.id }}</span>
+                            <span style="font-size:10px; font-weight:700; color:var(--success-f); background:var(--success-t10); padding:2px 7px; border-radius:var(--radius-full);">Generated</span>
+                          </div>
+                          <div style="font-size:13px; font-weight:600; color:var(--neutral-b1); line-height:18px; margin-left:23px;">{{ dr.title }}</div>
+                          <div style="font-size:12px; color:var(--neutral-b2); margin-top:4px; margin-left:23px;">{{ dr.meta }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <!-- Main: draft detail -->
+                  <div id="tcg-dr-detail" style="flex:1; min-width:0; padding:20px 24px 28px; max-height:640px; overflow-y:auto;">
+                    <div style="display:flex; gap:10px; align-items:baseline;">
+                      <span style="font-size:15px; font-weight:700; color:var(--primary-f); flex:none;">{{ drId }}</span>
+                      <h3 style="font-size:16px; line-height:23px; font-weight:700; color:var(--neutral-b0); margin:0; letter-spacing:0;">{{ drTitle }}</h3>
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; margin:14px 0 16px; flex-wrap:wrap;">
+                      <span style="height:26px; padding:0 8px; border:1px solid var(--border); border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--neutral-b1); flex:none;">{{ drPr }}</span>
+                      <span style="font-size:13px; color:var(--neutral-b2); white-space:nowrap;">{{ drCaseNav }}</span>
+                      <button onclick="{{ saveDraft }}" class="tcg-btn-ghost" style="height:38px; padding:0 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:#fff; color:var(--neutral-b1); font-size:13px; font-weight:700; cursor:pointer; flex:none;">Save changes</button>
+                      <button onclick="{{ pushDraft }}" class="tcg-btn-primary" style="height:38px; padding:0 16px; border:0; border-radius:var(--radius-sm); background:var(--primary-b); color:#fff; font-size:13px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-xs-primary); flex:none;">Push to TestIT</button>
+                    </div>
+                    <sc-if value="{{ drMsgShow }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f); margin-bottom:14px;">
+                      <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
+                      {{ drMsg }}
+                    </div>
+                    </sc-if>
+                    <!-- SUMMARY -->
+                    <div id="tcg-dr-summary" style="margin-bottom:14px;">
+                      <div style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); padding:9px 12px; border-radius:var(--radius-xs); box-sizing:border-box;">
+                        <span style="color:var(--primary-f); font-size:9px;">&#9660;</span>
+                        <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">SUMMARY</span>
+                      </div>
+                      <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                        <div style="font-size:13.5px; line-height:21px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Goal:</span> {{ drGoal }}</div>
+                        <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">User Story:</span> <span style="color:var(--primary-f); font-weight:700; text-decoration:underline; cursor:pointer;">{{ drStory }}</span></div>
+                        <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Component:</span> {{ drComponent }}</div>
+                      </div>
+                    </div>
+                    <!-- PRECONDITIONS -->
+                    <div id="tcg-dr-pre" style="margin-bottom:14px;">
+                      <div style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); padding:9px 12px; border-radius:var(--radius-xs); box-sizing:border-box;">
+                        <span style="color:var(--primary-f); font-size:9px;">&#9660;</span>
+                        <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">PRECONDITIONS</span>
+                      </div>
+                      <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                        <sc-for list="{{ drPre }}" as="pl" hint-placeholder-count="4">
+                          <div style="{{ pl.lineStyle }}">
+                            <sc-for list="{{ pl.segs }}" as="seg" hint-placeholder-count="3"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <!-- TEST STEPS -->
+                    <div id="tcg-dr-steps" style="margin-bottom:14px;">
+                      <div style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); padding:9px 12px; border-radius:var(--radius-xs); box-sizing:border-box;">
+                        <span style="color:var(--primary-f); font-size:9px;">&#9660;</span>
+                        <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">TEST STEPS</span>
+                      </div>
+                      <div style="border:1px solid var(--border); border-radius:var(--radius-xs); margin-top:8px; overflow:hidden;">
+                        <div style="display:grid; grid-template-columns:44px 1fr 1fr 44px; background:var(--neutral-b5); padding:8px 14px; gap:14px;">
+                          <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">#</span>
+                          <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">ACTION</span>
+                          <span style="font-size:11px; font-weight:700; letter-spacing:.6px; color:var(--neutral-b2);">EXPECTED RESULT</span>
+                          <span></span>
+                        </div>
+                        <sc-for list="{{ drSteps }}" as="st" hint-placeholder-count="4">
+                          <div style="{{ st.rowStyle }}">
+                            <span style="font-size:13px; font-weight:700; color:var(--neutral-b1);">{{ st.n }}</span>
+                            <span style="font-size:13px; line-height:19px; color:var(--neutral-b0);"><sc-for list="{{ st.stepSegs }}" as="seg" hint-placeholder-count="2"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for></span>
+                            <span style="display:flex; flex-direction:column; gap:6px;">
+                              <sc-for list="{{ st.expLines }}" as="bu" hint-placeholder-count="3">
+                                <span style="display:flex; gap:7px; font-size:13px; line-height:19px; color:var(--neutral-b0);"><span style="flex:none; color:var(--neutral-b1);">&#8226;</span><span><sc-for list="{{ bu.segs }}" as="seg" hint-placeholder-count="2"><span style="{{ seg.st }}">{{ seg.t }}</span></sc-for></span></span>
+                              </sc-for>
+                            </span>
+                            <span style="display:flex; align-items:flex-start; justify-content:center;">
+                              <button onclick="{{ st.onDelete }}" title="Delete step" style="width:30px; height:30px; border:1px solid var(--danger-t10); border-radius:var(--radius-xs); background:var(--danger-t10); color:var(--danger-f); cursor:pointer; display:flex; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px;"><path d="M20 4v-2.4h-8v2.4h-8.8v2.4h2.72l1.68 23.2h16.8l1.68-23.2h2.72v-2.4h-8.8zM21.976 27.2h-11.952l-1.504-20.8h14.96l-1.504 20.8zM13.2 10.4h2.4v13.6h-2.4v-13.6zM16.4 10.4h2.4v13.6h-2.4v-13.6z"></path></svg>
+                              </button>
+                            </span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <!-- CUSTOM FIELDS -->
+                    <div id="tcg-dr-custom">
+                      <div style="width:100%; display:flex; align-items:center; gap:8px; background:var(--neutral-b5); padding:9px 12px; border-radius:var(--radius-xs); box-sizing:border-box;">
+                        <span style="color:var(--primary-f); font-size:9px;">&#9660;</span>
+                        <span style="font-size:12px; font-weight:700; letter-spacing:1.6px; color:var(--primary-f-high-contrast);">CUSTOM FIELDS</span>
+                      </div>
+                      <div style="border:1px solid var(--border); border-radius:var(--radius-xs); padding:14px 16px; margin-top:8px;">
+                        <div style="font-size:13.5px; line-height:21px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Automation status:</span> To be automated</div>
+                        <div style="font-size:13.5px; line-height:21px; margin-top:6px; color:var(--neutral-b0);"><span style="font-weight:700; color:var(--primary-f-high-contrast);">Test layer:</span> E2E</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Right rail anchor nav -->
+                  <div style="width:104px; flex:none; border-left:1px solid var(--border); padding:10px 8px; display:flex; flex-direction:column; gap:8px; background:#fff;">
+                    <sc-for list="{{ drAnchors }}" as="an" hint-placeholder-count="4">
+                      <button onclick="{{ an.onClick }}" style="{{ an.style }}">
+                        <span style="font-size:15px; line-height:1;">{{ an.icon }}</span>
+                        <span style="font-size:11px; font-weight:600; line-height:13px;">{{ an.label }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
+            <!-- Bottom action bar -->
+            <div id="tcg-actbar" style="position:sticky; bottom:0; margin-top:20px; background:var(--neutral-b5); padding:12px 16px; border:1px solid var(--border); z-index:5; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button onclick="{{ goStep3 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
+                <button onclick="{{ startOver }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Start over</button>
+              </div>
+              <button onclick="{{ generate }}" class="tcg-btn-ghost" style="height:44px; padding:0 20px; border:1.35px solid var(--primary-b); border-radius:var(--radius-md); background:#fff; color:var(--primary-f-high-contrast); font-size:14px; font-weight:600; cursor:pointer;">{{ generateLabel }}</button>
+            </div>
+
           </div>
           </sc-if>
 
@@ -671,11 +998,17 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 <script type="text/x-dc" data-dc-script="">
 class Component extends DCLogic {
   state = {
-    tab: 'generate', step: 1,
-    refs: '',
-    extracted: false, analyzing: false, hints: '', hintsHelpOpen: false,
-    reviewCount: 10, extractingUI: false, uiProgress: 0, uiStage: 0, uiDone: false,
+    tab: 'generate', step: 4,
+    refs: 'EVAA-31997',
+    extracted: true, analyzing: false, hints: '', hintsHelpOpen: false,
+    reviewCount: 10, extractingUI: false, uiProgress: 100, uiStage: 3, uiDone: true,
     files: [], generated: false, syncing: false,
+    step4Tab: 'existing', existingOpen: true, genOpen: true,
+    tcSearch: '', visibleCount: 20, selCase: 'CCI-12767',
+    updatedCases: {}, viewUpdated: false, updIds: '', updMsg: '',
+    secSummaryOpen: true, secPreOpen: true, secStepsOpen: true,
+    drSearch: '', selDraft: 'NEW-1', draftChecks: {}, deletedSteps: {},
+    titProject: '', suite: '', confUrl: '', genMsg: '', drMsg: '',
     modalOpen: false, credsSaved: false, cUser:'', cToken:'', tToken:'',
     serverCfg: null, serverCfgFailed: false,
     checks: { confluence: { status:'idle' }, testit: { status:'idle' } },
@@ -844,6 +1177,164 @@ class Component extends DCLogic {
   DETECTED_SCREENS = ['Supervisor','Agent type','Agent','From','RingCentral, Inc.','Pending disposition','Interaction','Categories','Active interactions','Interactions rollup','Talk time','Pending disp.','State duration','RingCX Agent','Subject','Agents','Average time per call','Login','Interactions','State','Channel','Product','Longest active interaction'];
   JIRA_SCREENS = [['Supervisor','0.90'],['Interactions','0.90'],['Agents','0.88'],['Interaction','0.82'],['Agent','0.72'],['Active interactions','0.70'],['State','0.68'],['Agent type','0.66']];
 
+  // ── Step 4 mock data ─────────────────────────────
+  segT(t){ return { t, st: { fontWeight: 400 } }; }
+  segB(t){ return { t, st: { fontWeight: 700 } }; }
+  segL(t){ return { t, st: { fontWeight: 700, color: 'var(--primary-f)', textDecoration: 'underline', cursor: 'pointer' } }; }
+  mkSegs(str){
+    const out = [];
+    String(str).split('**').forEach((part, i) => { if (part) out.push(i % 2 ? this.segB(part) : this.segT(part)); });
+    return out.length ? out : [this.segT('')];
+  }
+
+  EXISTING_CASES = [
+    { id:'CCI-12767', title:"[Playwright][Automated. Do not change] Check ability to reorder columns for supervisor's agent view", pr:1, score:'22.36', stepCount:5 },
+    { id:'CCI-31587', title:'[CCA E2E] Supervisor realtime stats telemetry for "SUPERVISOR" message during inbound call', pr:2, score:'21.38', stepCount:3 },
+    { id:'CCI-26440', title:'Supervisor Agent and Interactions view with saved table configuration', pr:3, score:'21.27', stepCount:6 },
+    { id:'CCI-10260', title:'[Playwright][Automated. Do not change] Check column values for agent supervisor list view (with omni enabled)', pr:4, score:'19.37', stepCount:6 },
+    { id:'CCI-31915', title:'Supervisor Agents table Hold duration column UI', pr:5, score:'18.91', stepCount:3 },
+    { id:'CCI-10713', title:'[Automated. Do not change] Check empty columns display a long dash when no value is present', pr:6, score:'18.05', stepCount:3 },
+    { id:'CCI-28104', title:'Supervisor can sort Agents table by State duration', pr:7, score:'17.82', stepCount:4 },
+    { id:'CCI-19477', title:'[CCA E2E] Interactions rollup counts match agent detail view', pr:8, score:'17.40', stepCount:5 },
+    { id:'CCI-22619', title:'Check Talk time column formatting for values over one hour', pr:9, score:'16.95', stepCount:3 },
+    { id:'CCI-30052', title:'Supervisor Interactions view keeps filters after tab switch', pr:10, score:'16.58', stepCount:4 },
+    { id:'CCI-11845', title:'[Playwright][Automated. Do not change] Verify Login column visibility toggle persists', pr:11, score:'16.11', stepCount:4 },
+    { id:'CCI-27390', title:'Check Utilisation column tooltip content and rounding', pr:12, score:'15.74', stepCount:3 },
+    { id:'CCI-14208', title:'Supervisor Agents table pagination with 500+ agents', pr:13, score:'15.32', stepCount:5 },
+    { id:'CCI-25888', title:'Check Average time per call column against reporting API', pr:14, score:'14.87', stepCount:4 },
+    { id:'CCI-31240', title:'[CCA E2E] Supervisor sees agent state change within 3 seconds', pr:15, score:'14.41', stepCount:6 },
+    { id:'CCI-16093', title:'Check Skill column shows all assigned skills in order', pr:16, score:'13.96', stepCount:3 },
+    { id:'CCI-29561', title:'Supervisor Interactions table column resize persists per user', pr:17, score:'13.52', stepCount:4 },
+    { id:'CCI-12034', title:'[Automated. Do not change] Check Pending Disposition badge count', pr:18, score:'13.08', stepCount:3 },
+    { id:'CCI-24717', title:'Supervisor can open agent detail from Agents table row', pr:19, score:'12.63', stepCount:4 },
+    { id:'CCI-18359', title:'Check Longest active Interaction column updates live', pr:20, score:'12.19', stepCount:5 },
+    { id:'CCI-20941', title:'Supervisor Agents table column order resets on Restore defaults', pr:21, score:'11.84', stepCount:4 },
+    { id:'CCI-15672', title:'[CCA E2E] Agent state telemetry during outbound call', pr:22, score:'11.47', stepCount:5 },
+    { id:'CCI-23508', title:'Check Interactions rollup column with zero interactions', pr:23, score:'11.09', stepCount:3 },
+    { id:'CCI-17226', title:'Supervisor view respects account-level column permissions', pr:24, score:'10.72', stepCount:4 },
+    { id:'CCI-26983', title:'Check State column color coding for all agent states', pr:25, score:'10.38', stepCount:3 },
+    { id:'CCI-13495', title:'[Playwright][Automated. Do not change] Agents table horizontal scroll with 13 columns', pr:26, score:'10.01', stepCount:4 },
+    { id:'CCI-21850', title:'Supervisor Interactions search matches partial subject text', pr:27, score:'9.67', stepCount:3 },
+    { id:'CCI-30714', title:'Check Agents table sticky header on scroll', pr:28, score:'9.28', stepCount:3 },
+    { id:'CCI-19082', title:'[CCA E2E] Supervisor tab access removed when permission revoked', pr:29, score:'8.94', stepCount:4 },
+    { id:'CCI-27541', title:'Check Agents table empty state when no agents match filters', pr:30, score:'8.55', stepCount:3 }
+  ];
+
+  caseDetail(c){
+    if (c.id === 'CCI-12767') {
+      return {
+        goal: 'Check settings table column for supervisor interaction list view.',
+        story: 'EVAA-2795', component: 'EAG',
+        pre: [
+          [this.segB('Account type(/s): '), this.segL('Unified Agent'), this.segT(' or '), this.segL('RC SSO Agent')],
+          this.mkSegs('with **"Supervisor"** Agent type ( see here ) **" Allow Supervisee stats "** is enabled in security settings'),
+          [this.segB('Extension type(/s):')],
+          [this.segB('Entry point(/s):')],
+          this.mkSegs('Log in to Agent as -> on **"Supervisor"** tab -> Agents')
+        ],
+        steps: [
+          { step:'Click on gear icon.', exp:'**" Agent table settings"** modal is opened. [L10N]' },
+          { step:'**Check checkbox** options order in the modal', exp:'The order should be: Agent(Disabled) | State | **State Duration** | State | Pending Disposition | Active Interactions | Longest active Interaction | Interactions rollup | Talk time | Average time per call | Login | Skill | Utilisation | [L10N]' },
+          { step:'Check **"Agent"** option is disabled and not Dragable', exp:'Agent option should be disabled and not dragable' },
+          { step:'Drag and Drop any values in the popup randomly and Click on save button', exp:'Popup should be Closed and the changed values should be displayed in the grid accordingly' },
+          { step:'Uncheck Login check box , Drag and drop to other place in popup', exp:'**Login Checkbox** should bot be displayed' }
+        ]
+      };
+    }
+    const genericSteps = [
+      { step:'Log in to Agent as a **"Supervisor"** user and open the Agents view.', exp:'The **Agents table** loads with the saved column configuration.' },
+      { step:'Locate the area described in the testcase title and interact with it.', exp:'The UI responds as described: **' + c.title.replace(/\*\*/g,'') + '**.' },
+      { step:'Refresh the page and check the same area again.', exp:'The behavior and configuration **persist** after reload. [L10N]' },
+      { step:'Verify the values against the reporting API response.', exp:'UI values **match** the API response for the same time range.' },
+      { step:'Repeat the check with a second supervisor account.', exp:'The behavior is **consistent** across supervisor accounts.' },
+      { step:'Check the audit log for the change event.', exp:'An audit entry is recorded with the correct user and timestamp.' }
+    ].slice(0, c.stepCount);
+    return {
+      goal: 'Check that ' + c.title.replace(/^\[[^\]]*\]\s*/g,'').replace(/\.$/,'').toLowerCase() + ' works as specified.',
+      story: 'EVAA-2795', component: 'EAG',
+      pre: [
+        [this.segB('Account type(/s): '), this.segL('Unified Agent'), this.segT(' or '), this.segL('RC SSO Agent')],
+        this.mkSegs('with **"Supervisor"** Agent type and **" Allow Supervisee stats "** enabled in security settings'),
+        [this.segB('Extension type(/s):')],
+        [this.segB('Entry point(/s):')],
+        this.mkSegs('Log in to Agent as -> on **"Supervisor"** tab -> Agents')
+      ],
+      steps: genericSteps
+    };
+  }
+
+  DRAFTS = [
+    { id:'NEW-1', pr:'P2', title:'Supervisor Interactions view displays AI handled interactions with transcript and AI scores', stepCount:4,
+      goal:'Check that Supervisor Interactions view displays fully and partially AI-handled interactions and provides transcript, confidence score, and sentiment score for each AI-handled interaction.',
+      story:'EUX-1390', component:'EAG',
+      pre: [
+        ['**Account type(/s): **','__L:Unified Agent__'],
+        ['User **<ai_supervisor_user>** has Supervisor Agent type and permission to view Supervisor Interactions.'],
+        ['**AI Agent** observability is enabled for the account.'],
+        ['Prepared active interactions are available:'],
+        ['**<fully_ai_interaction>** is handled fully by **<ai_agent_name>** with Agent type AirPro.'],
+        ['**<partially_ai_interaction>** is handled partially by **<ai_agent_name>** with Agent type AirPro and then by **<human_agent_name>** with Agent type Human.'],
+        ['Transcript, confidence score, and sentiment score are generated for both AI-handled interactions.'],
+        ['**Extension type(/s):**'],
+        ['**Entry point(/s):**'],
+        ['Log in to **RingCX Agent** as **<ai_supervisor_user>** -> Supervisor -> Interactions']
+      ],
+      steps: [
+        { step:'Search for **<fully_ai_interaction>** in the Search interactions field.',
+          exp:['**The Interactions table** displays the matching interaction row.','**The row** contains expected values in the Channel, Categories, Product, Interaction, Agent, Agent type, From, Subject, and Pending disp. columns.','**The Agent** value is **<ai_agent_name>**.','**The Agent** type value is AirPro.'] },
+        { step:'Open the interaction detail for **<fully_ai_interaction>**.',
+          exp:['**The transcript** panel opens with the full conversation.','**Confidence score** and **sentiment score** are displayed for the interaction.'] },
+        { step:'Search for **<partially_ai_interaction>** and open its detail.',
+          exp:['**The row** shows both **<ai_agent_name>** and **<human_agent_name>** as handling agents.','**The transcript** marks the handoff point from AI to human.'] },
+        { step:'Clear the search field.',
+          exp:['**The Interactions table** returns to the unfiltered view.'] }
+      ] },
+    { id:'NEW-2', pr:'P2', title:'Supervisor can switch Digital Worker status off and on from Agents view', stepCount:5,
+      goal:'Check that a supervisor can toggle a Digital Worker\u2019s status from the Agents view and the change is reflected in real time.',
+      story:'EUX-1390', component:'EAG',
+      pre: [
+        ['**Account type(/s): **','__L:Unified Agent__'],
+        ['User **<ai_supervisor_user>** has Supervisor Agent type and permission to manage Digital Workers.'],
+        ['At least one **Digital Worker** agent is provisioned and online.'],
+        ['**Entry point(/s):**'],
+        ['Log in to **RingCX Agent** as **<ai_supervisor_user>** -> Supervisor -> Agents']
+      ],
+      steps: [
+        { step:'Locate the **Digital Worker** row in the Agents table.', exp:['**The row** shows Agent type AirPro and current status Online.'] },
+        { step:'Open the row action menu and select **Turn off**.', exp:['A confirmation dialog appears describing the impact.'] },
+        { step:'Confirm the action.', exp:['**The status** changes to Offline within 3 seconds.','No new interactions are routed to the Digital Worker.'] },
+        { step:'Open the row action menu and select **Turn on**.', exp:['**The status** returns to Online within 3 seconds.'] },
+        { step:'Check the audit log.', exp:['Both status changes are recorded with **<ai_supervisor_user>** as the actor.'] }
+      ] },
+    { id:'NEW-3', pr:'P3', title:'Digital Worker observability data is exposed to Workflows', stepCount:4,
+      goal:'Check that Digital Worker observability metrics are available to Workflows for routing and reporting decisions.',
+      story:'EUX-1390', component:'EAG',
+      pre: [
+        ['**Account type(/s): **','__L:Unified Agent__'],
+        ['**AI Agent** observability is enabled for the account.'],
+        ['A workflow consuming **Digital Worker** metrics is published.'],
+        ['**Entry point(/s):**'],
+        ['Log in to **RingCX Agent** as **<ai_supervisor_user>** -> Workflows']
+      ],
+      steps: [
+        { step:'Open the published workflow and inspect the **Digital Worker** metrics node.', exp:['**The node** lists confidence score, sentiment score, and handled-interaction count as available inputs.'] },
+        { step:'Run the workflow with a test interaction.', exp:['**The run log** shows real metric values, not placeholders.'] },
+        { step:'Compare the metric values with the Supervisor Interactions view.', exp:['**The values match** for the same interaction and time range.'] },
+        { step:'Disable AI Agent observability and rerun the workflow.', exp:['**The run** fails with a clear error stating observability data is unavailable.'] }
+      ] }
+  ];
+
+  draftPreLines(dr){
+    return dr.pre.map(parts => {
+      const segs = [];
+      parts.forEach(p => {
+        if (p.indexOf('__L:') === 0) segs.push(this.segL(p.slice(4, -2)));
+        else this.mkSegs(p).forEach(sg => segs.push(sg));
+      });
+      return segs;
+    });
+  }
+
   set(k){ return (e)=> this.setState({ [k]: e.target.value }); }
 
   parse(str){
@@ -898,12 +1389,12 @@ class Component extends DCLogic {
       };
     });
 
-    const titleMap = {1:'Jira information & requirements',2:'Behavioral hints & test scenarios',3:'UI context',4:'Review and generate'};
+    const titleMap = {1:'Jira information & requirements',2:'Behavioral hints & test scenarios',3:'UI context',4:'Review Existing / Generate New'};
     const descMap = {
       1:'Enter Jira references — we\u2019ll fetch each ticket, then analyze the story for keywords.',
       2:'Add optional UI behaviors, edge cases, E2E flows, or validation notes to guide missing test case coverage.',
       3:'Upload Figma screenshots, extract UI context, find matching TestIT cases, and prioritize the results.',
-      4:'Confirm the inputs, then generate test cases and push them to Jira when ready.'
+      4:'Select a testcase from the list, review the current version, and update only the cases that need changes.'
     };
 
     const tab = (id, label) => ({
@@ -983,16 +1474,86 @@ class Component extends DCLogic {
           ? { border:'0', background:'var(--primary-b)', color:'#fff', cursor:'pointer', boxShadow:'var(--shadow-xs-primary)' }
           : { border:'0', background:'var(--neutral-b5)', color:'var(--neutral-b3)', cursor:'not-allowed' }) };
 
-    const summary = [
-      { label:'User story', value: parsed.story || '—' },
-      { label:'Epic / init', value: [parsed.epic, parsed.init].filter(Boolean).join(' · ') || '—' },
-      { label:'Keywords', value: s.extracted ? this.KEYWORDS.length + ' extracted' : 'Not extracted yet' },
-      { label:'Behavioral hints', value: s.hints.trim() ? 'Provided' : 'Not provided' },
-      { label:'Review count', value: String(s.reviewCount || 10) + ' matches shown first' },
-      { label:'Figma screenshots', value: s.uiDone
-          ? (s.files.length || 'No') + (s.files.length===1?' file':' files') + ' · 19,616 candidates matched'
-          : 'Skipped' },
+    // ── Step 4: existing testcases ──
+    const q = s.tcSearch.trim().toLowerCase();
+    const filtered = this.EXISTING_CASES.filter(c => !q || c.id.toLowerCase().includes(q) || c.title.toLowerCase().includes(q));
+    const shown = filtered.slice(0, s.visibleCount);
+    const selCase = this.EXISTING_CASES.find(c => c.id === s.selCase) || this.EXISTING_CASES[0];
+    const selIdx = filtered.findIndex(c => c.id === selCase.id);
+    const detail = this.caseDetail(selCase);
+    const isUpdated = !!s.updatedCases[selCase.id];
+    const showingUpdated = isUpdated && s.viewUpdated;
+    const exSteps = (showingUpdated
+      ? detail.steps.concat([{ step:'Verify the **AI-handled** interaction columns after the ' + (parsed.story || 'EVAA-31997') + ' changes.', exp:'The new columns are visible and **match the extracted UI context**.' }])
+      : detail.steps
+    ).map((st, i, arr) => ({
+      n: i + 1,
+      stepSegs: this.mkSegs(st.step),
+      expSegs: this.mkSegs(st.exp),
+      rowStyle: { display:'grid', gridTemplateColumns:'44px 1fr 1fr', padding:'11px 14px', gap:'14px', alignItems:'start', ...(i < arr.length - 1 ? { borderBottom:'1px solid var(--neutral-b5)' } : {}) }
+    }));
+    const tcList = shown.map(c => ({
+      id: c.id, title: c.title,
+      meta: 'Priority ' + c.pr + ' \u00B7 Score ' + c.score + ' \u00B7 ' + c.stepCount + ' steps',
+      onClick: () => this.setState({ selCase: c.id, viewUpdated: !!this.state.updatedCases[c.id] }),
+      rowStyle: {
+        padding:'12px 14px', cursor:'pointer', borderBottom:'1px solid var(--neutral-b5)',
+        ...(c.id === selCase.id
+          ? { background:'var(--primary-t10)', borderLeft:'3px solid var(--primary-b)', paddingLeft:'11px' }
+          : { borderLeft:'3px solid transparent', paddingLeft:'11px' })
+      }
+    }));
+    const anchorBtn = (active) => ({
+      display:'flex', flexDirection:'column', alignItems:'center', gap:'5px', padding:'10px 4px',
+      border:'1px solid ' + (active ? 'var(--primary-t20)' : 'var(--border)'), borderRadius:'var(--radius-xs)',
+      background: active ? 'var(--primary-t10)' : '#fff',
+      color: active ? 'var(--primary-f-high-contrast)' : 'var(--neutral-b2)', cursor:'pointer', width:'100%'
+    });
+    const scrollTo = (id) => () => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' }); };
+    const mkAnchors = (prefix) => [
+      { icon:'\uD83D\uDCCB', label:'Summary', onClick: scrollTo(prefix + '-summary'), style: anchorBtn(true) },
+      { icon:'\u2699\uFE0F', label:'Preconditions', onClick: scrollTo(prefix + '-pre'), style: anchorBtn(false) },
+      { icon:'\uD83D\uDC63', label:'Steps', onClick: scrollTo(prefix + '-steps'), style: anchorBtn(false) },
+      { icon:'\uD83D\uDDC2\uFE0F', label:'Custom Fields', onClick: scrollTo(prefix + '-custom'), style: anchorBtn(false) }
     ];
+    const toggleBtn = (active, enabled) => ({
+      height:'34px', padding:'0 14px', border:'0', fontSize:'13px', fontWeight:700,
+      background: active ? 'var(--primary-t10)' : '#fff',
+      color: active ? 'var(--primary-f-high-contrast)' : enabled ? 'var(--neutral-b2)' : 'var(--neutral-b4)',
+      cursor: enabled ? 'pointer' : 'not-allowed'
+    });
+
+    // ── Step 4: generated drafts ──
+    const dq = s.drSearch.trim().toLowerCase();
+    const draftsShown = this.DRAFTS.filter(d => !dq || d.id.toLowerCase().includes(dq) || d.title.toLowerCase().includes(dq));
+    const selDraft = this.DRAFTS.find(d => d.id === s.selDraft) || this.DRAFTS[0];
+    const drIdx = draftsShown.findIndex(d => d.id === selDraft.id);
+    const isChecked = (id) => s.draftChecks[id] === true;
+    const drList = draftsShown.map(d => ({
+      id: d.id, title: d.title, meta: d.stepCount + ' step(s)',
+      checked: isChecked(d.id),
+      onCheck: () => this.setState(st => ({ draftChecks: { ...st.draftChecks, [d.id]: st.draftChecks[d.id] !== true } })),
+      stopClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+      onClick: () => this.setState({ selDraft: d.id, drMsg:'' }),
+      rowStyle: {
+        padding:'12px 14px', cursor:'pointer', borderBottom:'1px solid var(--neutral-b5)',
+        ...(d.id === selDraft.id
+          ? { background:'var(--primary-t10)', borderLeft:'3px solid var(--primary-b)', paddingLeft:'11px' }
+          : { borderLeft:'3px solid transparent', paddingLeft:'11px' })
+      }
+    }));
+    const deleted = s.deletedSteps[selDraft.id] || {};
+    const drSteps = selDraft.steps
+      .map((st, i) => ({ st, origN: i }))
+      .filter(x => !deleted[x.origN])
+      .map((x, i, arr) => ({
+        n: i + 1,
+        stepSegs: this.mkSegs(x.st.step),
+        expLines: x.st.exp.map(line => ({ segs: this.mkSegs(line) })),
+        onDelete: () => this.setState(prev => ({ deletedSteps: { ...prev.deletedSteps, [selDraft.id]: { ...(prev.deletedSteps[selDraft.id] || {}), [x.origN]: true } } })),
+        rowStyle: { display:'grid', gridTemplateColumns:'44px 1fr 1fr 44px', padding:'11px 14px', gap:'14px', alignItems:'start', ...(i < arr.length - 1 ? { borderBottom:'1px solid var(--neutral-b5)' } : {}) }
+      }));
+    const preLineStyle = (i) => ({ fontSize:'13.5px', lineHeight:'21px', color:'var(--neutral-b0)', ...(i > 0 ? { marginTop:'6px' } : {}) });
 
     const uiStageTitles = {1:'Extracting UI context',2:'UI context ready',3:'Prioritizing matches'};
     const uiStageDescs = {
@@ -1130,9 +1691,119 @@ class Component extends DCLogic {
         const nx=names[st.files.length % names.length];
         return { files:[...st.files, { name:nx[0], size:nx[1] }] };
       }),
-      summary, generated:s.generated, genCount:24,
-      generate:()=>this.setState({ generated:true }),
-      generateLabel: s.generated ? 'Regenerate test cases' : 'Generate test cases',
+      // ── Step 4 bindings ──
+      updIds: s.updIds, onUpdIds: this.set('updIds'),
+      updSpecific: () => {
+        const ids = this.state.updIds.split(/[\s,]+/).map(x => x.trim().toUpperCase()).filter(Boolean);
+        const known = ids.filter(id => this.EXISTING_CASES.some(c => c.id === id));
+        if (!ids.length) { this.setState({ updMsg:'' }); return; }
+        const patch = {};
+        known.forEach(id => { patch[id] = true; });
+        this.setState(st => ({
+          updatedCases: { ...st.updatedCases, ...patch },
+          updMsg: known.length
+            ? 'Updated ' + known.length + ' testcase' + (known.length === 1 ? '' : 's') + ': ' + known.join(', ') + '.'
+            : 'No matching testcases found for ' + ids.join(', ') + '.',
+          ...(known.length ? { selCase: known[0], viewUpdated: true, step4Tab:'existing' } : {})
+        }));
+      },
+      updMsgShow: !!s.updMsg, updMsg: s.updMsg,
+      showTabStrip: s.generated,
+      tabExOnClick: () => this.setState({ step4Tab:'existing' }),
+      tabNewOnClick: () => this.setState({ step4Tab:'new' }),
+      tabExClass: s.step4Tab === 'existing' ? 'tcg-tab-active' : '',
+      tabNewClass: s.step4Tab === 'new' ? 'tcg-tab-active' : '',
+      tabExColor: s.step4Tab === 'existing' ? 'var(--primary-f-high-contrast)' : 'var(--neutral-b2)',
+      tabNewColor: s.step4Tab === 'new' ? 'var(--primary-f-high-contrast)' : 'var(--neutral-b2)',
+      showExisting: s.step4Tab === 'existing',
+      showNew: s.generated && s.step4Tab === 'new',
+      toggleExisting: () => this.setState(st => ({ existingOpen: !st.existingOpen })),
+      existingOpen: s.existingOpen,
+      existingChevron: s.existingOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      matchedBadge: '16220 matched',
+      tcSearch: s.tcSearch, onTcSearch: (e) => this.setState({ tcSearch: e.target.value, visibleCount: 20 }),
+      tcCount: shown.length, tcList,
+      showMore: filtered.length > s.visibleCount,
+      loadMore: () => this.setState(st => ({ visibleCount: st.visibleCount + 10 })),
+      exId: selCase.id, exTitle: selCase.title, exPr: selCase.pr,
+      exCaseNav: 'Case ' + (selIdx + 1) + ' \u00B7 Score ' + selCase.score,
+      viewOriginal: () => this.setState({ viewUpdated: false }),
+      viewUpdated: () => { if (isUpdated) this.setState({ viewUpdated: true }); },
+      origBtnStyle: toggleBtn(!showingUpdated, true),
+      updBtnStyle: toggleBtn(showingUpdated, isUpdated),
+      showUpdateBtn: !isUpdated,
+      updateCase: () => this.setState(st => ({
+        updatedCases: { ...st.updatedCases, [selCase.id]: true },
+        viewUpdated: true,
+        updMsg: 'Updated 1 testcase: ' + selCase.id + '.'
+      })),
+      showUpdatedBand: showingUpdated,
+      toggleSecSummary: () => this.setState(st => ({ secSummaryOpen: !st.secSummaryOpen })),
+      toggleSecPre: () => this.setState(st => ({ secPreOpen: !st.secPreOpen })),
+      toggleSecSteps: () => this.setState(st => ({ secStepsOpen: !st.secStepsOpen })),
+      secSummaryOpen: s.secSummaryOpen, secPreOpen: s.secPreOpen, secStepsOpen: s.secStepsOpen,
+      secSummaryChevron: s.secSummaryOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      secPreChevron: s.secPreOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      secStepsChevron: s.secStepsOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      exGoal: showingUpdated ? detail.goal.replace(/\.$/, '') + ', including the AI-handled interaction columns from ' + (parsed.story || 'EVAA-31997') + '.' : detail.goal,
+      exStory: detail.story, exComponent: detail.component,
+      exAutomation: selCase.title.indexOf('[Playwright]') === 0 || selCase.title.indexOf('[Automated') !== -1 ? 'Automated' : 'Manual',
+      exPre: detail.pre.map((segs, i) => ({ segs, lineStyle: preLineStyle(i) })),
+      exSteps, exAnchors: mkAnchors('tcg-ex'),
+      // Generated drafts
+      toggleGen: () => this.setState(st => ({ genOpen: !st.genOpen })),
+      genOpen: s.genOpen,
+      genChevron: s.genOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
+      draftsBadge: this.DRAFTS.length + ' drafts',
+      draftIntro: this.DRAFTS.length + ' new testcase draft(s) generated from Jira, UI facts, and top 2 ranked examples.',
+      onTitProject: (e) => this.setState({ titProject: e.target.value, suite: '' }),
+      titProjectColor: s.titProject ? 'var(--neutral-b0)' : 'var(--neutral-b3)',
+      suiteEnabled: !!s.titProject, suiteDisabled: !s.titProject,
+      onSuite: this.set('suite'),
+      confUrl: s.confUrl, onConfUrl: this.set('confUrl'),
+      uploadConfluence: () => {
+        const n = this.DRAFTS.filter(d => this.state.draftChecks[d.id] === true).length;
+        this.setState({ genMsg: !this.state.confUrl.trim() ? 'Add a Confluence page URL first.' : (n ? 'Uploaded ' + n + ' draft' + (n === 1 ? '' : 's') + ' to Confluence.' : 'Select at least 1 draft to upload.') });
+      },
+      refineLabel: (() => { const n = this.DRAFTS.filter(d => isChecked(d.id)).length; return n ? 'Refine (' + n + ')' : 'Refine'; })(),
+      refineOpacity: this.DRAFTS.some(d => isChecked(d.id)) ? '1' : '0.5',
+      refineTitle: this.DRAFTS.some(d => isChecked(d.id)) ? 'Refine selected drafts with the latest UI context' : 'Select at least 1 draft to refine',
+      refineDrafts: () => {
+        const n = this.DRAFTS.filter(d => this.state.draftChecks[d.id] === true).length;
+        this.setState({ genMsg: n ? 'Refined ' + n + ' selected draft' + (n === 1 ? '' : 's') + ' with the latest UI context.' : 'Select at least 1 draft to refine.' });
+      },
+      genMsgShow: !!s.genMsg, genMsg: s.genMsg,
+      drSearch: s.drSearch, onDrSearch: this.set('drSearch'),
+      allDraftsChecked: this.DRAFTS.every(d => isChecked(d.id)),
+      toggleAllDrafts: () => {
+        const all = !this.DRAFTS.every(d => this.state.draftChecks[d.id] === true);
+        const patch = {};
+        this.DRAFTS.forEach(d => { patch[d.id] = all; });
+        this.setState({ draftChecks: patch });
+      },
+      drCount: draftsShown.length, drList,
+      drId: selDraft.id, drTitle: selDraft.title, drPr: selDraft.pr,
+      drCaseNav: 'Case ' + (drIdx + 1),
+      saveDraft: () => this.setState({ drMsg: 'Saved changes to ' + selDraft.id + '.' }),
+      pushDraft: () => this.setState({ drMsg: 'Pushed ' + selDraft.id + ' to TestIT' + (this.state.titProject ? ' \u00B7 ' + this.state.titProject : '') + (this.state.suite ? ' / ' + this.state.suite : '') + '.' }),
+      drMsgShow: !!s.drMsg, drMsg: s.drMsg,
+      drGoal: selDraft.goal, drStory: selDraft.story, drComponent: selDraft.component,
+      drPre: this.draftPreLines(selDraft).map((segs, i) => ({ segs, lineStyle: preLineStyle(i) })),
+      drSteps, drAnchors: mkAnchors('tcg-dr'),
+      generated: s.generated,
+      generate: () => this.setState({ generated: true, step4Tab: 'new', genOpen: true, genMsg: '' }),
+      generateLabel: s.generated ? 'Regenerate' : 'Generate new testcases',
+      startOver: () => this.setState({
+        step: 1, refs: '', extracted: false, analyzing: false, hints: '', hintsHelpOpen: false,
+        reviewCount: 10, extractingUI: false, uiProgress: 0, uiStage: 0, uiDone: false,
+        files: [], generated: false, resolved: {},
+        step4Tab: 'existing', existingOpen: true, genOpen: true,
+        tcSearch: '', visibleCount: 20, selCase: 'CCI-12767',
+        updatedCases: {}, viewUpdated: false, updIds: '', updMsg: '',
+        secSummaryOpen: true, secPreOpen: true, secStepsOpen: true,
+        drSearch: '', selDraft: 'NEW-1', draftChecks: {}, deletedSteps: {},
+        titProject: '', suite: '', confUrl: '', genMsg: '', drMsg: ''
+      }),
       services,
       syncHeadline: s.lastSyncedAt ? 'Last synced ' + this.relTime(s.lastSyncedAt).toLowerCase() : 'Not synced yet',
       syncLabel: s.syncing?'Syncing…':'Sync now',
