@@ -234,6 +234,9 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
         </div>
       </div>
       <div style="position:relative; display:flex; align-items:center; gap:10px;">
+        <sc-if value="{{ showHeaderStartOver }}" hint-placeholder-val="{{ true }}">
+        <button onclick="{{ openRestartConfirm }}" class="tcg-btn-ghost" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M1 4v6h6"></path><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Start over</button>
+        </sc-if>
         <!-- Sync: status + action in one control -->
         <button onclick="{{ doSync }}" class="tcg-btn-ghost" style="display:inline-flex; align-items:center; gap:9px; height:44px; padding:0 15px; border-radius:var(--radius-md); border:1px solid var(--border); background:#fff; cursor:pointer; white-space:nowrap;">
           <svg viewBox="0 0 32 32" fill="{{ syncIconColor }}" style="width:16px;height:16px; transform:{{ syncSpin }}; transition:transform var(--duration-slow) var(--easing-fast-in);"><path d="M30.584 20.861c-0.321 1.13-0.761 2.21-1.306 3.226l0.043-0.087c-1.264 2.242-3.072 4.045-5.251 5.265l-0.069 0.035c-2.211 1.199-4.841 1.903-7.636 1.903-0.125 0-0.249-0.001-0.373-0.004-0.106 0.003-0.231 0.004-0.355 0.004-2.795 0-5.425-0.705-7.722-1.946l0.086 0.043c-2.248-1.256-4.056-3.059-5.285-5.233l-0.035-0.068c-1.187-2.208-1.885-4.831-1.885-7.617 0-0.133 0.002-0.264 0.005-0.395-0.001-0.070-0.002-0.153-0.002-0.235 0-2.846 0.742-5.518 2.043-7.834l-0.042 0.080c1.222-2.236 2.993-4.038 5.135-5.265l0.065-0.034c2.211-1.2 4.841-1.905 7.635-1.905 0.126 0 0.252 0.001 0.378 0.004 2.79-0.030 5.54 0.66 7.987 2 1.625 0.889 3.021 2.066 4.133 3.465v-4.929h2.4v9.067h-9.2v-2.267h5.176c-0.968-1.371-2.211-2.494-3.653-3.304l-0.056-0.029c-1.887-1.010-4.127-1.603-6.506-1.603-0.1 0-0.201 0.001-0.301 0.003-0.085-0.002-0.186-0.003-0.287-0.003-2.379 0-4.62 0.593-6.582 1.64l0.075-0.037c-1.867 1.043-3.365 2.548-4.371 4.364l-0.029 0.057c-1.010 1.866-1.604 4.084-1.604 6.442 0 0.116 0.002 0.232 0.005 0.347-0.002 0.093-0.004 0.202-0.004 0.311 0 2.364 0.594 4.589 1.64 6.534l-0.036-0.074c1.033 1.879 2.54 3.386 4.362 4.391l0.057 0.029c1.868 1.010 4.089 1.604 6.449 1.604 0.114 0 0.228-0.001 0.341-0.004 0.085 0.002 0.185 0.003 0.285 0.003 2.379 0 4.62-0.593 6.582-1.64l-0.075 0.037c1.871-1.045 3.371-2.557 4.371-4.382l0.029-0.058c0.446-0.826 0.811-1.722 1.079-2.668l2.304 0.768z"></path></svg>
@@ -325,12 +328,12 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
           <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
           <div>
             <label style="display:flex; align-items:baseline; gap:8px; margin-bottom:8px;">
-              <span style="font-size:13px; font-weight:600; color:var(--neutral-b1);">Jira references</span>
-              <span style="font-size:12px; color:var(--neutral-b3);">Paste a Jira URL or type keys, comma-separated</span>
+              <span style="font-size:13px; font-weight:600; color:var(--neutral-b1);">User story</span>
+              <span style="font-size:12px; color:var(--neutral-b3);">Enter one user story—key or Jira link.</span>
             </label>
             <div style="position:relative;">
               <span style="position:absolute; left:13px; top:15px; color:var(--neutral-b3); display:flex;"><svg viewBox="0 0 32 32" fill="currentColor" style="width:16px;height:16px;"><path d="M31.2 16c0 5.44-2.894 8.2-8.602 8.2h-4.598v-2.4h4.598c4.347 0 6.2-1.736 6.2-5.8s-1.853-5.8-6.2-5.8h-4.598v-2.4h4.598c5.707 0 8.602 2.76 8.602 8.2zM3.2 16c0-4.064 1.854-5.8 6.202-5.8h4.598v-2.4h-4.598c-5.707 0-8.602 2.76-8.602 8.2s2.894 8.2 8.602 8.2h4.598v-2.4h-4.598c-4.347 0-6.2-1.736-6.2-5.8zM9 17.2h14v-2.4h-14z"></path></svg></span>
-              <input value="{{ refs }}" onchange="{{ onRefs }}" placeholder="INIT-16664, ROE-13, https://jira/browse/EVAA-31997" class="tcg-field" style="width:100%; box-sizing:border-box; height:46px; padding:0 14px 0 38px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
+              <input value="{{ refs }}" onchange="{{ onRefs }}" placeholder="EVAA-31997 or https://jira/browse/EVAA-31997" class="tcg-field" style="width:100%; box-sizing:border-box; height:46px; padding:0 14px 0 38px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
             </div>
             <!-- What we parsed + fetched -->
             <sc-if value="{{ hasParsed }}" hint-placeholder-val="{{ true }}">
@@ -350,14 +353,20 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                     <span style="font-size:13px; color:var(--neutral-b1); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ c.title }}</span>
                   </span>
                   </sc-if>
+                  <sc-if value="{{ c.extra }}" hint-placeholder-val="{{ true }}">
+                  <span style="display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--danger-f); font-weight:500;">
+                    <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px; flex:none;"><path d="M17.41 8.586c0.364 0.35 0.591 0.841 0.591 1.385 0 0.548-0.226 1.037-0.59 1.384l-0.001 0.001c-0.37 0.381-0.878 0.592-1.41 0.586-0.528 0.003-1.034-0.208-1.402-0.586-0.369-0.348-0.599-0.84-0.599-1.385 0-0.005 0-0.012 0-0.018 0-0.368 0.104-0.712 0.283-1.005l-0.005 0.008c0.179-0.298 0.427-0.547 0.725-0.725 0.28-0.169 0.618-0.269 0.98-0.269 0.55 0 1.020 0.195 1.412 0.586zM14.8 23h2.4v-8h-2.4zM31.2 16c0 8.837-7.163 16-16 16s-16-7.163-16-16 7.163-16 16-16 16 7.163 16 16zM28.8 16c0-7.511-6.089-13.6-13.6-13.6s-13.6 6.089-13.6 13.6 6.089 13.6 13.6 13.6 13.6-6.089 13.6-13.6z"></path></svg>
+                    Additional user story—remove it to continue
+                  </span>
+                  </sc-if>
                 </div>
               </sc-for>
             </div>
             </sc-if>
-            <sc-if value="{{ needsStory }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ refsErrorShow }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex; align-items:center; gap:7px; margin-top:12px; font-size:13px; color:var(--danger-f); font-weight:500;">
-              <svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px;"><path d="M17.41 8.586c0.364 0.35 0.591 0.841 0.591 1.385 0 0.548-0.226 1.037-0.59 1.384l-0.001 0.001c-0.37 0.381-0.878 0.592-1.41 0.586-0.528 0.003-1.034-0.208-1.402-0.586-0.369-0.348-0.599-0.84-0.599-1.385 0-0.005 0-0.012 0-0.018 0-0.368 0.104-0.712 0.283-1.005l-0.005 0.008c0.179-0.298 0.427-0.547 0.725-0.725 0.28-0.169 0.618-0.269 0.98-0.269 0.55 0 1.020 0.195 1.412 0.586zM14.8 23h2.4v-8h-2.4zM31.2 16c0 8.837-7.163 16-16 16s-16-7.163-16-16 7.163-16 16-16 16 7.163 16 16zM28.8 16c0-7.511-6.089-13.6-13.6-13.6s-13.6 6.089-13.6 13.6 6.089 13.6 13.6 13.6 13.6-6.089 13.6-13.6z"></path></svg>
-              Add a user story ID or Jira URL to continue.
+              <svg viewBox="0 0 32 32" fill="currentColor" style="width:15px;height:15px; flex:none;"><path d="M17.41 8.586c0.364 0.35 0.591 0.841 0.591 1.385 0 0.548-0.226 1.037-0.59 1.384l-0.001 0.001c-0.37 0.381-0.878 0.592-1.41 0.586-0.528 0.003-1.034-0.208-1.402-0.586-0.369-0.348-0.599-0.84-0.599-1.385 0-0.005 0-0.012 0-0.018 0-0.368 0.104-0.712 0.283-1.005l-0.005 0.008c0.179-0.298 0.427-0.547 0.725-0.725 0.28-0.169 0.618-0.269 0.98-0.269 0.55 0 1.020 0.195 1.412 0.586zM14.8 23h2.4v-8h-2.4zM31.2 16c0 8.837-7.163 16-16 16s-16-7.163-16-16 7.163-16 16-16 16 7.163 16 16zM28.8 16c0-7.511-6.089-13.6-13.6-13.6s-13.6 6.089-13.6 13.6 6.089 13.6 13.6 13.6 13.6-6.089 13.6-13.6z"></path></svg>
+              {{ refsError }}
             </div>
             </sc-if>
 
@@ -448,6 +457,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
           <div>
             <label style="display:block; font-size:13px; font-weight:600; color:var(--neutral-b1); margin-bottom:8px;">Review count <span style="font-weight:400; color:var(--neutral-b3);">How many matching test cases to show first</span></label>
             <input type="number" min="1" max="100" value="{{ reviewCount }}" onchange="{{ onReviewCount }}" class="tcg-field" style="width:160px; box-sizing:border-box; height:44px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in); margin-bottom:18px;">
+            <sc-if value="{{ notExtractingUI }}" hint-placeholder-val="{{ true }}">
             <div onclick="{{ addFile }}" class="tcg-drop" style="border:1.5px dashed var(--neutral-b4); border-radius:var(--radius-md); padding:28px; text-align:center; cursor:pointer; transition:all var(--duration-fast) var(--easing-fast-in);">
               <div style="width:44px; height:44px; margin:0 auto 10px; border-radius:50%; background:var(--primary-t10); display:flex; align-items:center; justify-content:center;">
                 <svg viewBox="0 0 32 32" fill="var(--primary-f)" style="width:20px;height:20px;"><path d="M29.848 28.152l-7.134-7.134c1.548-1.898 2.486-4.347 2.486-7.014 0-6.176-5.024-11.2-11.2-11.2s-11.2 5.024-11.2 11.2 5.024 11.2 11.2 11.2c2.667 0 5.116-0.938 7.033-2.502l7.133 7.134zM5.2 14c0-4.853 3.947-8.8 8.8-8.8s8.8 3.947 8.8 8.8c0 4.851-3.947 8.8-8.8 8.8-4.858-0.005-8.795-3.942-8.8-8.799z"></path></svg>
@@ -455,6 +465,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
               <div style="font-size:14px; font-weight:600; color:var(--neutral-b1);">Drop Figma screenshots here or click to browse</div>
               <div style="font-size:13px; color:var(--neutral-b2); margin-top:4px;">PNG or JPG up to 10 MB.</div>
             </div>
+            </sc-if>
             <sc-if value="{{ hasFiles }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
               <sc-for list="{{ files }}" as="f" hint-placeholder-count="2">
@@ -467,7 +478,9 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                     <div style="font-size:12px; color:var(--neutral-b2);">{{ f.size }}</div>
                   </div>
                   <span style="display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--success-f);"><svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>Ready</span>
+                  <sc-if value="{{ notExtractingUI }}" hint-placeholder-val="{{ true }}">
                   <button onclick="{{ f.onRemove }}" title="Remove screenshot" aria-label="Remove screenshot" style="width:28px; height:28px; border:0; border-radius:var(--radius-xs); background:transparent; color:var(--neutral-b2); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background var(--duration-fast) var(--easing-fast-in);" onmouseover="this.style.background='var(--danger-t10)';this.style.color='var(--danger-f)'" onmouseout="this.style.background='transparent';this.style.color='var(--neutral-b2)'"><svg viewBox="0 0 32 32" fill="currentColor" style="width:13px;height:13px;"><path d="M25.333 8.547l-1.88-1.88-7.453 7.453-7.453-7.453-1.88 1.88 7.453 7.453-7.453 7.453 1.88 1.88 7.453-7.453 7.453 7.453 1.88-1.88-7.453-7.453z"></path></svg></button>
+                  </sc-if>
                 </div>
               </sc-for>
             </div>
@@ -746,6 +759,18 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                       <div style="width:100%; box-sizing:border-box; height:40px; padding:0 10px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:var(--neutral-b3); background:var(--neutral-b5); display:flex; align-items:center;">Select project first</div>
                       </sc-if>
                     </div>
+                    <sc-if value="{{ showWikiInit }}" hint-placeholder-val="{{ true }}">
+                    <div style="width:150px;">
+                      <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">INIT reference</label>
+                      <input value="{{ wikiInit }}" onchange="{{ onWikiInit }}" placeholder="INIT-16664" class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none;">
+                    </div>
+                    </sc-if>
+                    <sc-if value="{{ showWikiEpic }}" hint-placeholder-val="{{ true }}">
+                    <div style="width:150px;">
+                      <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">Epic reference</label>
+                      <input value="{{ wikiEpic }}" onchange="{{ onWikiEpic }}" placeholder="ROE-13" class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none;">
+                    </div>
+                    </sc-if>
                     <div style="flex:1; min-width:260px;">
                       <label style="display:block; font-size:10px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--neutral-b2); margin-bottom:6px;">Confluence page URL</label>
                       <input value="{{ confUrl }}" onchange="{{ onConfUrl }}" placeholder="https://wiki.ringcentral.com/spaces/.../pages/..." class="tcg-field" style="width:100%; box-sizing:border-box; height:40px; padding:0 12px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:13px; color:var(--neutral-b0); outline:none;">
@@ -893,7 +918,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
             <div id="tcg-actbar" style="position:sticky; bottom:0; margin-top:20px; background:var(--neutral-b5); padding:12px 16px; border:1px solid var(--border); z-index:5; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
               <div style="display:flex; gap:12px; flex-wrap:wrap;">
                 <button onclick="{{ goStep3 }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Back</button>
-                <button onclick="{{ startOver }}" class="tcg-btn-ghost" style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Start over</button>
+                <button onclick="{{ openRestartConfirm }}" class="tcg-btn-ghost" style="display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M1 4v6h6"></path><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Start over</button>
               </div>
               <button onclick="{{ generate }}" class="tcg-btn-ghost" style="height:44px; padding:0 20px; border:1.35px solid var(--primary-b); border-radius:var(--radius-md); background:#fff; color:var(--primary-f-high-contrast); font-size:14px; font-weight:600; cursor:pointer;">{{ generateLabel }}</button>
             </div>
@@ -944,6 +969,21 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
       </sc-if>
 
     </div>
+
+    <!-- Start over confirmation dialog -->
+    <sc-if value="{{ confirmRestartOpen }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed; inset:0; z-index:110; background:var(--neutral-b0-t50); display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onclick="{{ closeRestartConfirm }}" style="position:absolute; inset:0;"></div>
+      <div role="dialog" aria-modal="true" aria-label="Start over?" style="position:relative; width:100%; max-width:440px; background:#fff; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); padding:26px 28px;">
+        <h2 style="font-size:19px; font-weight:700; color:var(--neutral-b1); margin:0; letter-spacing:-0.2px;">Start over?</h2>
+        <p style="font-size:14px; line-height:20px; color:var(--neutral-b2); margin:10px 0 0;">This clears your current story, hints, screenshots, and drafts. You&rsquo;ll go back to step 1.</p>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:24px;">
+          <button onclick="{{ closeRestartConfirm }}" class="tcg-btn-ghost" style="height:42px; padding:0 18px; border:1px solid var(--border); border-radius:var(--radius-md); background:#fff; color:var(--neutral-b1); font-size:14px; font-weight:600; cursor:pointer;">Cancel</button>
+          <button onclick="{{ startOver }}" style="height:42px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--danger-f); color:#fff; font-size:14px; font-weight:600; cursor:pointer;">Start over</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
 
     <!-- Service access modal -->
     <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ true }}">
@@ -1010,7 +1050,8 @@ class Component extends DCLogic {
     secSummaryOpen: true, secPreOpen: true, secStepsOpen: true,
     drSearch: '', selDraft: 'NEW-1', draftChecks: {}, deletedSteps: {},
     titProject: '', suite: '', confUrl: '', genMsg: '', drMsg: '',
-    modalOpen: false, credsSaved: false, cUser:'', cToken:'', tToken:'',
+    wikiInit: '', wikiEpic: '',
+    modalOpen: false, confirmRestart: false, credsSaved: false, cUser:'', cToken:'', tToken:'',
     serverCfg: null, serverCfgFailed: false,
     checks: { confluence: { status:'idle' }, testit: { status:'idle' } },
     resolved: {},
@@ -1129,7 +1170,7 @@ class Component extends DCLogic {
   }
 
   resolveRefs(str){
-    const keys = [...new Set(this.parse(str).chips.map(c => c.value))];
+    const keys = [...new Set(this.parse(str).chips.filter(c => c.kind !== 'extra').map(c => c.value))];
     this.setState(st => {
       const resolved = { ...st.resolved };
       keys.forEach(k => { if (!resolved[k]) resolved[k] = { loading:true, title:'' }; });
@@ -1345,14 +1386,19 @@ class Component extends DCLogic {
 
   parse(str){
     const toks=(str||'').split(/[\s,]+/).map(t=>t.trim()).filter(Boolean);
-    let init='', epic='', story='';
+    let init='', epic='', story='', storyCount=0;
     const chips=[];
     toks.forEach(t=>{
       if(/^INIT-/i.test(t)){ init=t; chips.push({type:'Init', value:t, kind:'muted'}); }
       else if(/^(ROE|EPIC)-/i.test(t)){ epic=t; chips.push({type:'Epic', value:t, kind:'muted'}); }
-      else { let v=t; const m=t.match(/([A-Za-z]{2,}-\d+)/); if(m) v=m[1]; story=v; chips.push({type:'Story', value:v, kind:'story'}); }
+      else {
+        let v=t; const m=t.match(/([A-Za-z]{2,}-\d+)/); if(m) v=m[1];
+        storyCount++;
+        if(storyCount===1){ story=v; chips.push({type:'Story', value:v, kind:'story'}); }
+        else { chips.push({type:'Story', value:v, kind:'extra'}); }
+      }
     });
-    return { init, epic, story, chips };
+    return { init, epic, story, storyCount, valid: storyCount===1, chips };
   }
 
   renderVals() {
@@ -1397,7 +1443,7 @@ class Component extends DCLogic {
 
     const titleMap = {1:'Jira information & requirements',2:'Behavioral hints & test scenarios',3:'UI context',4:'Review Existing / Generate New'};
     const descMap = {
-      1:'Enter Jira references — we\u2019ll fetch each ticket, then analyze the story for keywords.',
+      1:'Enter your user story reference\u2014we\u2019ll fetch the ticket, then analyze the story for keywords. Test cases are generated from the story. We\u2019ll ask for INIT and Epic references when you upload new test cases to Confluence.',
       2:'Add optional UI behaviors, edge cases, E2E flows, or validation notes to guide missing test case coverage.',
       3:'Upload Figma screenshots, extract UI context, find matching TestIT cases, and prioritize the results.',
       4:'Select a testcase from the list, review the current version, and update only the cases that need changes.'
@@ -1456,15 +1502,18 @@ class Component extends DCLogic {
     const chipWrap = { display:'inline-flex', alignItems:'center', gap:'7px', fontSize:'13px', fontWeight:600, padding:'5px 12px 5px 7px', borderRadius:'9999px' };
     const tagBase = { fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'.3px', padding:'2px 6px', borderRadius:'var(--radius-xs)' };
     const refItems = parsed.chips.map((c, i) => {
+      const isExtra = c.kind === 'extra';
       const r = s.resolved[c.value] || { loading:true, title:'' };
-      const done = !!r.title;
-      const variant = c.kind==='story'
+      const done = !isExtra && !!r.title;
+      const variant = isExtra
+        ? { style:{ ...chipWrap, background:'var(--danger-t10)', color:'var(--danger-f)' }, tagStyle:{ ...tagBase, background:'var(--danger)', color:'#fff' } }
+        : c.kind==='story'
         ? { style:{ ...chipWrap, background:'var(--primary-t10)', color:'var(--primary-f-high-contrast)' }, tagStyle:{ ...tagBase, background:'var(--primary-b)', color:'#fff' } }
         : { style:{ ...chipWrap, background:'var(--neutral-b5)', color:'var(--neutral-b1)' }, tagStyle:{ ...tagBase, background:'#fff', color:'var(--neutral-b2)', border:'1px solid var(--border)' } };
       return {
         type:c.type, value:c.value, ...variant,
-        loading: !done, done, title: r.title,
-        rowStyle: { display:'flex', alignItems:'center', gap:'12px', padding:'11px 14px', ...(i>0 ? { borderTop:'1px solid var(--neutral-b5)' } : {}) }
+        loading: !isExtra && !done, done, title: r.title, extra: isExtra,
+        rowStyle: { display:'flex', alignItems:'center', gap:'12px', padding:'11px 14px', ...(i>0 ? { borderTop:'1px solid var(--neutral-b5)' } : {}), ...(isExtra ? { background:'var(--danger-t10)' } : {}) }
       };
     });
 
@@ -1475,10 +1524,16 @@ class Component extends DCLogic {
       ...(s.analyzing
         ? { border:'0', background:'var(--primary-t80)', color:'#fff', cursor:'progress' }
         : s.extracted
-        ? { border:'1px solid var(--border)', background:'#fff', color:'var(--neutral-b1)', cursor:'pointer' }
-        : parsed.story
+        ? (parsed.valid
+          ? { border:'1px solid var(--border)', background:'#fff', color:'var(--neutral-b1)', cursor:'pointer' }
+          : { border:'1px solid var(--border)', background:'var(--neutral-b5)', color:'var(--neutral-b3)', cursor:'not-allowed' })
+        : parsed.valid
           ? { border:'0', background:'var(--primary-b)', color:'#fff', cursor:'pointer', boxShadow:'var(--shadow-xs-primary)' }
           : { border:'0', background:'var(--neutral-b5)', color:'var(--neutral-b3)', cursor:'not-allowed' }) };
+
+    const refsErrorText = parsed.storyCount > 1
+      ? 'Only one user story is supported. Remove the additional story references to continue.'
+      : !parsed.storyCount ? 'Add a user story reference to continue.' : '';
 
     // ── Step 4: existing testcases ──
     const q = s.tcSearch.trim().toLowerCase();
@@ -1595,6 +1650,9 @@ class Component extends DCLogic {
       modalOpen: s.modalOpen,
       openModal: () => { this.setState({ modalOpen: true }); this.fetchServerConfig(); },
       closeModal: () => this.setState({ modalOpen: false }),
+      confirmRestartOpen: s.confirmRestart,
+      openRestartConfirm: () => this.setState({ confirmRestart: true }),
+      closeRestartConfirm: () => this.setState({ confirmRestart: false }),
       connBorder: s.modalOpen ? 'var(--primary-f)' : 'var(--border)',
       connBg: s.modalOpen ? 'var(--primary-t10)' : '#fff',
       credsSaved: s.credsSaved,
@@ -1637,10 +1695,12 @@ class Component extends DCLogic {
       svcSummaryColor: svcOkCount === services.length ? 'var(--success-f)' : svcOkCount > 0 ? 'var(--warning-f)' : 'var(--neutral-b2)',
       syncIconColor: s.syncing ? 'var(--primary-f)' : 'var(--neutral-b2)',
       step: s.step, isStep1:s.step===1, isStep2:s.step===2, isStep3:s.step===3, isStep4:s.step===4,
+      showHeaderStartOver: s.tab==='generate' && s.step>=3,
       steps,
       panelTitle: titleMap[s.step], panelDesc: descMap[s.step],
       refs:s.refs, onRefs:(e)=>{ const v=e.target.value; this.setState({refs:v}); this.resolveRefs(v); },
-      refItems, hasParsed: parsed.chips.length>0, needsStory: parsed.chips.length>0 && !parsed.story,
+      refItems, hasParsed: parsed.chips.length>0,
+      refsErrorShow: parsed.chips.length>0 && !parsed.valid, refsError: refsErrorText,
       storyKey: parsed.story, storyTitle: ((s.resolved[parsed.story]||{}).title) || '',
       ctxRefs: parsed.chips.filter(c => c.kind === 'muted').map(c => ({ type: c.type, value: c.value })),
       hasCtxRefs: parsed.chips.some(c => c.kind === 'muted'),
@@ -1650,7 +1710,7 @@ class Component extends DCLogic {
       hints: s.hints, onHints: this.set('hints'),
       extractStyle, extractLabel: s.analyzing ? 'Extracting…' : (s.extracted ? 'Re-analyze' : 'Analyze'),
       extract: () => {
-        if (!parsed.story || s.analyzing) return;
+        if (!parsed.valid || s.analyzing) return;
         this.setState({ analyzing:true });
         setTimeout(() => this.setState({ analyzing:false, extracted:true, step:2 }), 1500);
       },
@@ -1774,9 +1834,20 @@ class Component extends DCLogic {
       suiteEnabled: !!s.titProject, suiteDisabled: !s.titProject,
       onSuite: this.set('suite'),
       confUrl: s.confUrl, onConfUrl: this.set('confUrl'),
+      showWikiInit: !parsed.init, wikiInit: s.wikiInit, onWikiInit: this.set('wikiInit'),
+      showWikiEpic: !parsed.epic, wikiEpic: s.wikiEpic, onWikiEpic: this.set('wikiEpic'),
       uploadConfluence: () => {
-        const n = this.DRAFTS.filter(d => this.state.draftChecks[d.id] === true).length;
-        this.setState({ genMsg: !this.state.confUrl.trim() ? 'Add a Confluence page URL first.' : (n ? 'Uploaded ' + n + ' draft' + (n === 1 ? '' : 's') + ' to Confluence.' : 'Select at least 1 draft to upload.') });
+        const st = this.state;
+        const init = parsed.init || st.wikiInit.trim();
+        const epic = parsed.epic || st.wikiEpic.trim();
+        const missing = [];
+        if (!init) missing.push('an INIT reference');
+        if (!epic) missing.push('an Epic reference');
+        const n = this.DRAFTS.filter(d => st.draftChecks[d.id] === true).length;
+        this.setState({ genMsg: missing.length
+          ? 'Add ' + missing.join(' and ') + ' to upload to Confluence.'
+          : !st.confUrl.trim() ? 'Add a Confluence page URL first.'
+          : (n ? 'Uploaded ' + n + ' draft' + (n === 1 ? '' : 's') + ' to Confluence.' : 'Select at least 1 draft to upload.') });
       },
       refineLabel: (() => { const n = this.DRAFTS.filter(d => isChecked(d.id)).length; return n ? 'Refine (' + n + ')' : 'Refine'; })(),
       refineOpacity: this.DRAFTS.some(d => isChecked(d.id)) ? '1' : '0.5',
@@ -1815,7 +1886,8 @@ class Component extends DCLogic {
         updatedCases: {}, viewUpdated: false, updIds: '', updMsg: '',
         secSummaryOpen: true, secPreOpen: true, secStepsOpen: true,
         drSearch: '', selDraft: 'NEW-1', draftChecks: {}, deletedSteps: {},
-        titProject: '', suite: '', confUrl: '', genMsg: '', drMsg: ''
+        titProject: '', suite: '', confUrl: '', genMsg: '', drMsg: '', wikiInit: '', wikiEpic: '',
+        confirmRestart: false
       }),
       services,
       syncHeadline: s.lastSyncedAt ? 'Last synced ' + this.relTime(s.lastSyncedAt).toLowerCase() : 'Not synced yet',
