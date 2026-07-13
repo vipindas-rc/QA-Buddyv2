@@ -1049,11 +1049,15 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
+  // Demo mode: if the app server can't be reached, fall back to a demo config
+  // so Jira still shows as connected. Remove the fallback to restore real behavior.
+  DEMO_SERVER_CFG = { jira: { configured: true, account: 'qa.buddy@evaa.atlassian.net' }, openai: { configured: true } };
+
   fetchServerConfig(){
     fetch('/api/services/config')
       .then(r => { if (!r.ok) throw new Error('bad status'); return r.json(); })
       .then(cfg => this.setState({ serverCfg: cfg, serverCfgFailed: false }))
-      .catch(() => this.setState({ serverCfg: null, serverCfgFailed: true }));
+      .catch(() => this.setState({ serverCfg: this.DEMO_SERVER_CFG, serverCfgFailed: false }));
   }
 
   setCheck(svc, patch){
@@ -1084,18 +1088,19 @@ class Component extends DCLogic {
       .then(res => this.setCheck(svc, res.ok
         ? { status:'ok', account: res.account || '' }
         : { status:'fail', message: res.message || 'The check didn\u2019t finish. Try again.' }))
-      .catch(() => this.setCheck(svc, { status:'fail', message:'Can\u2019t reach the app server. Try again.' }));
+      .catch(() => {
+        // Demo mode: if the app server can't be reached, simulate a successful check.
+        const account = svc === 'confluence'
+          ? (s.cUser.includes('@') ? s.cUser.trim() : s.cUser.trim() + '@evaa.atlassian.net')
+          : '';
+        setTimeout(() => this.setCheck(svc, { status:'ok', account }), 700);
+      });
   }
 
   setCred(key, svc){
     return (e) => {
       const v = e.target.value;
       this.setState(st => ({ [key]: v, checks: { ...st.checks, [svc]: { status:'idle' } } }));
-      setTimeout(() => {
-        const st = this.state;
-        const ready = svc === 'confluence' ? (st.cUser.trim() && st.cToken.trim()) : !!st.tToken.trim();
-        if (ready) this.testService(svc);
-      }, 0);
     };
   }
 

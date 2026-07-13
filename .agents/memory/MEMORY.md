@@ -1,1 +1,2 @@
 - [Bundled design artifact editing](bundled-design-artifacts.md) — unpack/repack __bundler/template JSON with <\u002F escaping; check {{binding}} parity; screenshot via REPLIT_DEV_DOMAIN when :80 proxy down.
+- [TS project references stale dist](ts-project-references.md) — tsc reads workspace libs' dist .d.ts; regen'd api-zod exports look "missing" until `pnpm exec tsc -b lib/api-zod`.

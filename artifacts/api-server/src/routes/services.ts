@@ -7,6 +7,15 @@ import {
 
 const router: IRouter = Router();
 
+// Demo mode: skip real external calls and simulate successful connections.
+// Set to false to restore real Confluence/TestIT checks below.
+const DEMO_MODE = true;
+const DEMO_CHECK_DELAY_MS = 700;
+
+function demoDelay(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, DEMO_CHECK_DELAY_MS));
+}
+
 const CHECK_TIMEOUT_MS = 6000;
 
 function maskKey(key: string): string {
@@ -19,16 +28,29 @@ router.get("/services/config", (_req, res) => {
   const jiraToken = process.env.JIRA_API_TOKEN || "";
   const openaiKey = process.env.OPENAI_API_KEY || "";
 
-  const data = GetServicesConfigResponse.parse({
-    jira: {
-      configured: Boolean(jiraEmail && jiraToken),
-      ...(jiraEmail ? { account: jiraEmail } : {}),
-    },
-    openai: {
-      configured: Boolean(openaiKey),
-      ...(openaiKey ? { account: maskKey(openaiKey) } : {}),
-    },
-  });
+  const data = GetServicesConfigResponse.parse(
+    DEMO_MODE
+      ? {
+          jira: {
+            configured: true,
+            account: jiraEmail || "qa.buddy@evaa.atlassian.net",
+          },
+          openai: {
+            configured: true,
+            account: openaiKey ? maskKey(openaiKey) : maskKey("demo-key-4dm0"),
+          },
+        }
+      : {
+          jira: {
+            configured: Boolean(jiraEmail && jiraToken),
+            ...(jiraEmail ? { account: jiraEmail } : {}),
+          },
+          openai: {
+            configured: Boolean(openaiKey),
+            ...(openaiKey ? { account: maskKey(openaiKey) } : {}),
+          },
+        },
+  );
   res.json(data);
 });
 
@@ -56,6 +78,11 @@ async function testConfluence(username: string, token: string): Promise<TestOutc
       reason: "missing_field",
       message: "Enter your Confluence username and API token.",
     };
+  }
+  if (DEMO_MODE) {
+    await demoDelay();
+    const account = username.includes("@") ? username.trim() : `${username.trim()}@evaa.atlassian.net`;
+    return { ok: true, account, message: "Connected to Confluence." };
   }
   const base = (process.env.CONFLUENCE_BASE_URL || "https://evaa.atlassian.net/wiki").replace(/\/+$/, "");
   const auth = Buffer.from(`${username}:${token}`).toString("base64");
@@ -106,6 +133,10 @@ async function testTestit(token: string): Promise<TestOutcome> {
       reason: "missing_field",
       message: "Enter your TestIT token.",
     };
+  }
+  if (DEMO_MODE) {
+    await demoDelay();
+    return { ok: true, message: "Connected to TestIT." };
   }
   const base = (process.env.TESTIT_BASE_URL || "").replace(/\/+$/, "");
   if (!base) {
