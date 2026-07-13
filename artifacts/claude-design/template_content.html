@@ -467,6 +467,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                     <div style="font-size:12px; color:var(--neutral-b2);">{{ f.size }}</div>
                   </div>
                   <span style="display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--success-f);"><svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>Ready</span>
+                  <button onclick="{{ f.onRemove }}" title="Remove screenshot" aria-label="Remove screenshot" style="width:28px; height:28px; border:0; border-radius:var(--radius-xs); background:transparent; color:var(--neutral-b2); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background var(--duration-fast) var(--easing-fast-in);" onmouseover="this.style.background='var(--danger-t10)';this.style.color='var(--danger-f)'" onmouseout="this.style.background='transparent';this.style.color='var(--neutral-b2)'"><svg viewBox="0 0 32 32" fill="currentColor" style="width:13px;height:13px;"><path d="M25.333 8.547l-1.88-1.88-7.453 7.453-7.453-7.453-1.88 1.88 7.453 7.453-7.453 7.453 1.88 1.88 7.453-7.453 7.453 7.453 1.88-1.88-7.453-7.453z"></path></svg></button>
                 </div>
               </sc-for>
             </div>
@@ -562,7 +563,7 @@ code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
                 <input value="{{ updIds }}" onchange="{{ onUpdIds }}" placeholder="CCI-25888, CCI-4858" class="tcg-field" style="flex:1; min-width:0; box-sizing:border-box; height:42px; padding:0 14px; border:1.35px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--neutral-b0); outline:none; transition:border-color var(--duration-fast) var(--easing-fast-in);">
                 <button onclick="{{ updSpecific }}" class="tcg-btn-primary" style="height:42px; padding:0 20px; border:0; border-radius:var(--radius-md); background:var(--primary-b); color:#fff; font-size:14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow-xs-primary); flex:none;">Update</button>
               </div>
-              <div style="font-size:12px; color:var(--neutral-b2); margin-top:8px;">Uses the Jira story and UI context already extracted in this run.</div>
+              <div style="font-size:12px; color:var(--neutral-b2); margin-top:8px;">{{ updCtxNote }}</div>
               <sc-if value="{{ updMsgShow }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--success-f); margin-top:8px;">
                 <svg viewBox="0 0 32 32" fill="currentColor" style="width:14px;height:14px; flex:none;"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16-16-7.163-16-16 7.163-16 16-16zM14.123 19.816l-3.654-3.84-1.738 1.651 5.664 5.957 9.984-14.090-1.96-1.387z"></path></svg>
@@ -1685,7 +1686,11 @@ class Component extends DCLogic {
       skipUi: () => { if (this._uiTimer) clearInterval(this._uiTimer); this.setState({ extractingUI:false, step:4 }); },
       goStep1:()=>this.setState({step:1}), goStep2:()=>this.setState({step:2}),
       goStep3:()=>this.setState({step:3}), goStep4:()=>this.setState({step:4}),
-      files:s.files, hasFiles:s.files.length>0,
+      files: s.files.map((f, i) => ({
+        name: f.name, size: f.size,
+        onRemove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(st => ({ files: st.files.filter((_, j) => j !== i) })); }
+      })),
+      hasFiles:s.files.length>0,
       addFile: () => this.setState(st => {
         const names=[['login-screen.png','248 KB'],['error-state.png','196 KB'],['mfa-prompt.png','312 KB']];
         const nx=names[st.files.length % names.length];
@@ -1693,6 +1698,9 @@ class Component extends DCLogic {
       }),
       // ── Step 4 bindings ──
       updIds: s.updIds, onUpdIds: this.set('updIds'),
+      updCtxNote: s.files.length
+        ? 'Uses the Jira story and UI context from ' + s.files.length + ' screenshot' + (s.files.length === 1 ? '' : 's') + ' extracted in this run.'
+        : 'Uses the Jira story and UI context already extracted in this run.',
       updSpecific: () => {
         const ids = this.state.updIds.split(/[\s,]+/).map(x => x.trim().toUpperCase()).filter(Boolean);
         const known = ids.filter(id => this.EXISTING_CASES.some(c => c.id === id));
